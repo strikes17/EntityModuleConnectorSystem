@@ -21,7 +21,6 @@ namespace _Project.Scripts
 
         public void AddListener(IUpdateListener updateListener)
         {
-            //
             m_UpdateListeners.Add(updateListener);
             m_UpdateListeners = m_UpdateListeners.OrderBy(x => x.Order).ToList();
         }
