@@ -44,6 +44,13 @@ namespace _Project.Scripts
                 x.GetType() == typeof(T)) as T;
         }
 
+        public AbstractBehaviourModule GetBehaviorModuleByType(Type behaviourModuleType)
+        {
+            return m_BehaviourModules.FirstOrDefault(x =>
+                x.GetType().IsSubclassOf(behaviourModuleType) ||
+                x.GetType() == behaviourModuleType);
+        }
+
         public T GetValueModuleByType<T>() where T : AbstractValueModule
         {
             var valueModule = m_ValueModules.FirstOrDefault(x =>

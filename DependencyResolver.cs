@@ -74,9 +74,37 @@ namespace _Project.Scripts
                 }
             });
 
-            var tutorialEntities = entities.Where(x => x is TutorialStepEntity);
-            foreach (TutorialStepEntity tutorialEntity in tutorialEntities)
+
+
+            m_ConnectorResolvers.ForEach(handler =>
             {
+                var connector = handler.Value;
+                Resolve(connector, ref m_ConnectorResolvers, ref m_FailedConnectors);
+                // ResolveConnector(connector);
+            });
+
+            foreach (var registerUpdateListener in m_RegisterUpdateListeners)
+            {
+                foreach (var behaviourModule in registerUpdateListener.BehaviourModules)
+                {
+                    behaviourModule.Register(m_GameUpdateHandler);
+                }
+            }
+
+            m_EntityContainerModules.ForEach(containerModule =>
+            {
+                containerModule.ElementAdded += OnEntityAddedToContainer;
+            });
+
+            m_ConnectorResolvers.Clear();
+        }
+
+        private void OnEntityAddedToContainer(AbstractEntity abstractEntity)
+        {
+            var tutorialEntity = abstractEntity as TutorialStepEntity;
+            if(tutorialEntity != null)
+            {
+                Debug.Log($"At tutorial step entity: {tutorialEntity.name}");
                 foreach (var startAction in tutorialEntity.StartActions)
                 {
                     ResolveHandler<IResolveTarget> handler =
@@ -104,43 +132,18 @@ namespace _Project.Scripts
                         new ResolveHandler<IResolveTarget>(tutorialEntity, endCondition);
                     m_TutorialConditionsResolvers.Add(handler);
                 }
-            }
 
-            m_TutorialActionsResolvers.ForEach(handler =>
-            {
-                Resolve(handler.Value, ref m_TutorialActionsResolvers, ref m_FailedTutorialActions);
-            });
-
-            m_TutorialConditionsResolvers.ForEach(handler =>
-            {
-                Resolve(handler.Value, ref m_TutorialConditionsResolvers, ref m_FailedTutorialConditions);
-            });
-
-            m_ConnectorResolvers.ForEach(handler =>
-            {
-                var connector = handler.Value;
-                Resolve(connector, ref m_ConnectorResolvers, ref m_FailedConnectors);
-                // ResolveConnector(connector);
-            });
-
-            foreach (var registerUpdateListener in m_RegisterUpdateListeners)
-            {
-                foreach (var behaviourModule in registerUpdateListener.BehaviourModules)
+                m_TutorialActionsResolvers.ForEach(handler =>
                 {
-                    behaviourModule.Register(m_GameUpdateHandler);
-                }
+                    Resolve(handler.Value, ref m_TutorialActionsResolvers, ref m_FailedTutorialActions);
+                });
+
+                m_TutorialConditionsResolvers.ForEach(handler =>
+                {
+                    Resolve(handler.Value, ref m_TutorialConditionsResolvers, ref m_FailedTutorialConditions);
+                });
             }
 
-            m_EntityContainerModules.ForEach(containerModule =>
-            {
-                containerModule.ElementAdded += OnEntityAddedToContainer;
-            });
-
-            m_ConnectorResolvers.Clear();
-        }
-
-        private void OnEntityAddedToContainer(AbstractEntity abstractEntity)
-        {
             var entityBehaviourModules = abstractEntity.BehaviourModules;
             foreach (var module in entityBehaviourModules)
             {

@@ -16,6 +16,7 @@ namespace _Project.Scripts
 
         private List<GuiTowerConvertWidgetEntity> m_Widgets = new();
 
+
         public void SpawnButtons(BaseTower baseTower)
         {
             var towerConvertDataObject = baseTower.BaseTowerDataObject.TowerConvertDataObject;
@@ -37,8 +38,6 @@ namespace _Project.Scripts
                 }
 
                 widgetEntity = Object.Instantiate(m_TowerConvertWidgetEntity, m_Root);
-                var buttonGroupIdModule = widgetEntity.GetBehaviorModuleByType<ButtonGroupIdModule>();
-                buttonGroupIdModule.TowerDataObject = baseTowerDataObject;
                 m_Widgets.Add(widgetEntity);
                 if (widgetEntity != null)
                 {

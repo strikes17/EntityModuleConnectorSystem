@@ -6,7 +6,7 @@ namespace _Project.Scripts
     [Serializable]
     public class TutorialBrushDisableInteraction : AbstractTutorialAction
     {
-        [Inject] public PlayerBrushModule m_PlayerBrushModule;
+        [Inject] private PlayerBrushModule m_PlayerBrushModule;
         [SerializeField] private bool m_IsBlock;
         
         public void Block()

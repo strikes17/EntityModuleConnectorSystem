@@ -7,11 +7,12 @@ namespace _Project.Scripts
     public class TutorialCreatedTowerCondition : AbstractTutorialStepCondition
     {
         [SerializeField] private BaseTowerDataObject m_BaseTowerDataObject;
+        [Inject] private EntityContainerModule m_EntityContainerModule;
         
         public override void Initialize(AbstractEntity abstractEntity)
         {
             base.Initialize(abstractEntity);
-            // m_ContainerModule.ElementAdded += ContainerModuleOnElementAdded;
+            m_EntityContainerModule.ElementAdded += ContainerModuleOnElementAdded;
         }
 
         private void ContainerModuleOnElementAdded(AbstractEntity obj)

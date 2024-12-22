@@ -9,7 +9,7 @@ namespace _Project.Scripts.Camera
     [Serializable]
     public class CameraInteractModule : AbstractBehaviourModule
     {
-        [SerializeField] private CameraView m_CameraView;
+        [SerializeField] private UnityEngine.Camera m_Camera;
         [SerializeField] private EventSystem m_EventSystem;
 
         [SerializeField] private List<GraphicRaycaster> m_GraphicRaycasters;
@@ -51,7 +51,7 @@ namespace _Project.Scripts.Camera
                 return;
             RaycastHit hit;
             var input = Input.mousePosition;
-            var ray = m_CameraView.Camera.ScreenPointToRay(input);
+            var ray = m_Camera.ScreenPointToRay(input);
             InputType inputType = InputType.None;
             if (Input.GetMouseButton(0))
             {

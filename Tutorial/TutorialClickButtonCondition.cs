@@ -5,9 +5,9 @@ using UnityEngine.UI;
 namespace _Project.Scripts
 {
     [Serializable]
-    public class TutorialClickButtonCondition : AbstractTutorialStepCondition
+    public abstract class TutorialClickButtonCondition : AbstractTutorialStepCondition
     {
-        [SerializeField] private Button m_Button;
+        protected Button m_Button;
 
         public override void Initialize(AbstractEntity abstractEntity)
         {

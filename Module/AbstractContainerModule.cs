@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using Sirenix.OdinInspector;
 using UnityEngine;
 
 namespace _Project.Scripts
@@ -23,6 +24,15 @@ namespace _Project.Scripts
         {
             m_ContainerList.Remove(element.GetHashCode());
             ElementRemoved(element);
+        }
+
+        [Button("Print elements")]
+        private void PrintElements()
+        {
+            foreach (var x1 in ContainerCollection)
+            {
+                Debug.Log(x1.GetType());
+            }
         }
     }
 }

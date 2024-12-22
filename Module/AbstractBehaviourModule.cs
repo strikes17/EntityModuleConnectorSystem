@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections;
 using Redcode.Moroutines;
+using Sirenix.OdinInspector;
+using Sirenix.Utilities.Editor;
 using UnityEngine;
 
 namespace _Project.Scripts
@@ -8,6 +10,12 @@ namespace _Project.Scripts
     [Serializable]
     public abstract class AbstractBehaviourModule : IUpdateListener, IRegisterUpdateListener
     {
+        [Button("Copy type")]
+        private void CopyTypeString()
+        {
+            Clipboard.Copy(GetType().ToString());
+        }
+
         protected AbstractEntity m_AbstractEntity;
 
         public virtual void OnUpdate()
