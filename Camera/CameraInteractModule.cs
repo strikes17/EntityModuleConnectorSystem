@@ -9,22 +9,27 @@ namespace _Project.Scripts.Camera
     [Serializable]
     public class CameraInteractModule : AbstractBehaviourModule
     {
+        [SerializeField] private float m_InteractDistance;
         [SerializeField] private UnityEngine.Camera m_Camera;
         [SerializeField] private EventSystem m_EventSystem;
 
         [SerializeField] private List<GraphicRaycaster> m_GraphicRaycasters;
 
+        [SerializeField] private AbstractEntity m_User;
+
+        public AbstractEntity User => m_User;
+
         private PointerEventData m_PointerEventData;
 
         private List<RaycastResult> m_RaycastResults;
 
-        public event Action<AbstractEntity, RaycastHit> EntityClickedDown = delegate { };
+        public event Action<AbstractEntity, RaycastHit> HitEntity = delegate { };
 
-        public event Action<AbstractEntity, RaycastHit> EntityClickedUp = delegate { };
-        
         public bool IsInteractionAvailable => m_InteractionBlockers.Count == 0;
 
         private Dictionary<int, byte> m_InteractionBlockers = new();
+
+        private RaycastHit m_RaycastHit;
 
         public override int Order => 10;
 
@@ -45,65 +50,29 @@ namespace _Project.Scripts.Camera
             m_RaycastResults = new List<RaycastResult>();
         }
 
-        public override void OnUpdate()
+        public void CameraForwardRaycast(bool isUiBlocking)
         {
-            if (!IsInteractionAvailable)
-                return;
-            RaycastHit hit;
-            var input = Input.mousePosition;
-            var ray = m_Camera.ScreenPointToRay(input);
-            InputType inputType = InputType.None;
-            if (Input.GetMouseButton(0))
+            var ray = new Ray(m_Camera.transform.position, m_Camera.transform.forward);
+            if (Physics.Raycast(ray, out m_RaycastHit, m_InteractDistance))
             {
-                inputType = InputType.Hold;
-            }
-
-            if (Input.GetMouseButtonDown(0))
-            {
-                inputType = InputType.OneClick;
-            }
-
-            if (Input.GetMouseButtonUp(0))
-            {
-                inputType = InputType.End;
-            }
-
-            if (Physics.Raycast(ray, out hit, Mathf.Infinity))
-            {
-                AbstractEntity abstractEntity = hit.collider.GetComponent<AbstractEntity>();
+                AbstractEntity abstractEntity = m_RaycastHit.collider.GetComponent<AbstractEntity>();
                 if (abstractEntity != null)
                 {
-                    if (inputType != InputType.None)
+                    if (isUiBlocking)
                     {
-                        RaycastTargetBehaviourModule raycastTargetBehaviour =
-                            abstractEntity.GetBehaviorModuleByType<RaycastTargetBehaviourModule>();
-                        if (raycastTargetBehaviour != null)
+                        m_PointerEventData.position = Input.mousePosition;
+                        foreach (var graphicRaycaster in m_GraphicRaycasters)
                         {
-                            if (inputType == InputType.OneClick)
+                            m_RaycastResults.Clear();
+                            graphicRaycaster.Raycast(m_PointerEventData, m_RaycastResults);
+                            if (m_RaycastResults.Count > 0)
                             {
-                                EntityClickedDown(abstractEntity, hit);
-                                // raycastTargetBehaviour.OnStart(hit);
-                            }
-                            else if (inputType == InputType.Hold)
-                            {
-                                // raycastTargetBehaviour.OnHold(hit);
-                            }
-                            else if (inputType == InputType.End)
-                            {
-                                m_PointerEventData.position = Input.mousePosition;
-                                foreach (var graphicRaycaster in m_GraphicRaycasters)
-                                {
-                                    m_RaycastResults.Clear();
-                                    graphicRaycaster.Raycast(m_PointerEventData, m_RaycastResults);
-                                    if (m_RaycastResults.Count > 0)
-                                    {
-                                        return;
-                                    }
-                                }
-                                EntityClickedUp(abstractEntity, hit);
+                                return;
                             }
                         }
                     }
+
+                    HitEntity(abstractEntity, m_RaycastHit);
                 }
             }
         }

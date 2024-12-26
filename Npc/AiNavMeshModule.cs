@@ -15,21 +15,7 @@ namespace _Project.Scripts
         [SerializeField] private NavMeshAgent m_NavMeshAgent;
 
         private NavMeshPath m_NavMeshPath;
-
-        public NavMeshPath NavMeshPath => m_NavMeshPath;
-
         public Vector3 AgentPosition => m_AbstractEntity.transform.position;
-
-        private float m_TraveledDistance;
-
-        public float CurrentProgressToDestination
-        {
-            get
-            {
-                float progress = m_TraveledDistance / TotalDistanceToDestination;
-                return progress;
-            }
-        }
 
         public float TotalDistanceToDestination
         {
@@ -80,6 +66,16 @@ namespace _Project.Scripts
         }
 
         private Moroutine m_Moroutine;
+
+        public NavMeshPath FindPath(Vector3 target)
+        {
+            if (IsPathValid(target))
+            {
+                return m_NavMeshPath;
+            }
+
+            return null;
+        }
 
         public void SetDestination(Vector3 target)
         {

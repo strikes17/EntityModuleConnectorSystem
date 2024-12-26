@@ -11,13 +11,20 @@ namespace _Project.Scripts
     {
         public override event Action<AiTask> TaskCompleted;
 
-        public float SimulatedProgress => m_SimulatedProgress;
-
         private WaitForSeconds m_WaitForSeconds;
 
         private Moroutine m_ProgressMoroutine;
 
         private float m_SimulatedProgress;
+        
+        private Vector3 m_TargetDestination;
+        private AiNavMeshModule m_AiNavMeshModule;
+        
+        public AiSetDestinationOfflineTask(AiNavMeshModule navMeshModule, Vector3 targetDestination)
+        {
+            m_AiNavMeshModule = navMeshModule;
+            m_TargetDestination = targetDestination;
+        }
 
         public override void StartResolve()
         {
@@ -41,13 +48,13 @@ namespace _Project.Scripts
         {
             float interval = 1f;
             m_WaitForSeconds = new WaitForSeconds(interval);
-            AiSetDestinationOnlineTask destinationOnlineTask = m_OnlineTask as AiSetDestinationOnlineTask;
-            float totalTime = destinationOnlineTask.TotalTimeToDestination;
-            m_SimulatedProgress = destinationOnlineTask.MoveToDestinationProgress;
+            var path = m_AiNavMeshModule.FindPath(m_TargetDestination);
+            if (path != null)
+            {
+                
+            }
             while (true)
             {
-                m_SimulatedProgress += interval / totalTime;
-                Debug.Log($"Simulated offline progress of moving: {m_SimulatedProgress}");
                 yield return m_WaitForSeconds;
             }
         }

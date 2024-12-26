@@ -7,10 +7,6 @@ namespace _Project.Scripts
     [Serializable]
     public class AiSetDestinationOnlineTask : AiOnlineTask
     {
-        public float MoveToDestinationProgress => m_AiNavMeshModule.CurrentProgressToDestination;
-
-        public float TotalTimeToDestination => m_AiNavMeshModule.TotalTimeToReachDestination;
-
         private Vector3 m_TargetDestination;
         private AiNavMeshModule m_AiNavMeshModule;
 
