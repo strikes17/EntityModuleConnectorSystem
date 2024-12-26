@@ -17,10 +17,12 @@ namespace _Project.Scripts
             InitGame();
         }
 
+
         private void InitGame()
         {
-            MonoBehaviour[] gameObjects =
-                FindObjectsByType<MonoBehaviour>(FindObjectsInactive.Include, FindObjectsSortMode.None);
+            List<MonoBehaviour> gameObjects =
+                FindObjectsByType<MonoBehaviour>(FindObjectsInactive.Include, FindObjectsSortMode.None)
+                    .Distinct().ToList();
 
             List<IHaveInit> initables = new List<IHaveInit>();
 
@@ -35,7 +37,7 @@ namespace _Project.Scripts
 
             initables = initables.OrderBy(x => x.Order).ToList();
             initables.ForEach(x => x.Init());
-                
+
             List<IHavePostInit> postInitables = new List<IHavePostInit>();
 
             foreach (var go in gameObjects)

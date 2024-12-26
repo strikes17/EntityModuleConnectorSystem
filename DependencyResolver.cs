@@ -35,10 +35,10 @@ namespace _Project.Scripts
         public void Init()
         {
             m_RegisterUpdateListeners.Clear();
-            
+
             var entities = FindObjectsByType<AbstractEntity>(FindObjectsInactive.Include, FindObjectsSortMode.None)
                 .ToList();
-            
+
             m_RegisterUpdateListeners.AddRange(entities);
             entities.ForEach(abstractEntity =>
             {
@@ -48,13 +48,13 @@ namespace _Project.Scripts
                 {
                     m_EntityContainerModules.Add(containerModule);
                 }
-                
+
                 var entityContainerModule = abstractEntity.GetBehaviorModuleByType<EntityContainerModule>();
                 if (entityContainerModule != null)
                 {
                     m_EntityContainerModules.Add(entityContainerModule);
                 }
-                
+
                 var entityConnectors = abstractEntity.Connectors;
                 foreach (var connector in entityConnectors)
                 {
@@ -81,7 +81,6 @@ namespace _Project.Scripts
             });
 
 
-
             m_ConnectorResolvers.ForEach(handler =>
             {
                 var connector = handler.Value;
@@ -101,14 +100,14 @@ namespace _Project.Scripts
             {
                 containerModule.ElementAdded += OnEntityAddedToContainer;
             });
-            
+
             m_ConnectorResolvers.Clear();
         }
 
         private void OnEntityAddedToContainer(AbstractEntity abstractEntity)
         {
             var tutorialEntity = abstractEntity as TutorialStepEntity;
-            if(tutorialEntity != null)
+            if (tutorialEntity != null)
             {
                 Debug.Log($"At tutorial step entity: {tutorialEntity.name}");
                 foreach (var startAction in tutorialEntity.StartActions)
@@ -239,7 +238,7 @@ namespace _Project.Scripts
                     {
                         behaviourResolve = m_BehaviourModulesResolvers.Find(handler =>
                             (handler.Value.GetType().IsSubclassOf(fieldType) || handler.Value.GetType() == fieldType) &&
-                            (handler.AbstractEntity.GetType() == type));
+                            (handler.AbstractEntity.GetType() == targetEntityType));
                     }
                     else
                     {

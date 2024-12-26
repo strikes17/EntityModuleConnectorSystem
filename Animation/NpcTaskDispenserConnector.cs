@@ -77,7 +77,7 @@ namespace _Project.Scripts
 
         private void CreateWalkToDestinationTask(Vector3 targetPoint)
         {
-            AiSetDestinationOfflineTask setDestinationOfflineTask = new AiSetDestinationOfflineTask();
+            AiSetDestinationOfflineTask setDestinationOfflineTask = new AiSetDestinationOfflineTask(m_AiNavMeshModule, targetPoint);
             AiSetDestinationOnlineTask setDestinationOnlineTask =
                 new AiSetDestinationOnlineTask(m_AiNavMeshModule, targetPoint);
             AiTaskResolver setDestinationTaskResolver = new AiTaskResolver(setDestinationOfflineTask,

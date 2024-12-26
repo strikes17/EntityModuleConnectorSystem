@@ -9,10 +9,10 @@ namespace _Project.Scripts.Camera
 
         protected override void Initialize()
         {
-            m_CameraInteractModule.EntityClickedUp += CameraInteractModuleOnEntityClickedUp;
+            m_CameraInteractModule.HitEntity += CameraInteractModuleOnHitEntity;
         }
 
-        private void CameraInteractModuleOnEntityClickedUp(AbstractEntity abstractEntity, RaycastHit hit)
+        private void CameraInteractModuleOnHitEntity(AbstractEntity abstractEntity, RaycastHit hit)
         {
             m_EntitySelectorModule.TrySelectTargetEntity(abstractEntity, hit);
         }
