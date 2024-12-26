@@ -35,20 +35,26 @@ namespace _Project.Scripts
         public void Init()
         {
             m_RegisterUpdateListeners.Clear();
-
+            
             var entities = FindObjectsByType<AbstractEntity>(FindObjectsInactive.Include, FindObjectsSortMode.None)
                 .ToList();
-
+            
             m_RegisterUpdateListeners.AddRange(entities);
             entities.ForEach(abstractEntity =>
             {
-                var entityContainerModule =
+                var containerModule =
                     abstractEntity.GetBehaviorModuleByType<AbstractContainerModule<AbstractEntity>>();
+                if (containerModule != null)
+                {
+                    m_EntityContainerModules.Add(containerModule);
+                }
+                
+                var entityContainerModule = abstractEntity.GetBehaviorModuleByType<EntityContainerModule>();
                 if (entityContainerModule != null)
                 {
                     m_EntityContainerModules.Add(entityContainerModule);
                 }
-
+                
                 var entityConnectors = abstractEntity.Connectors;
                 foreach (var connector in entityConnectors)
                 {
@@ -95,7 +101,7 @@ namespace _Project.Scripts
             {
                 containerModule.ElementAdded += OnEntityAddedToContainer;
             });
-
+            
             m_ConnectorResolvers.Clear();
         }
 

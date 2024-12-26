@@ -3,6 +3,8 @@
     public interface IUpdateListener
     {
         void OnUpdate();
+
+        void OnLateUpdate();
         
         int Order { get; }
     }

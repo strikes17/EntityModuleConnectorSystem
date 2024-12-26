@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
@@ -16,6 +17,15 @@ namespace _Project.Scripts
             {
                 var updateListener = m_UpdateListeners[index];
                 updateListener.OnUpdate();
+            }
+        }
+
+        private void LateUpdate()
+        {
+            for (var index = 0; index < m_UpdateListeners.Count; index++)
+            {
+                var updateListener = m_UpdateListeners[index];
+                updateListener.OnLateUpdate();
             }
         }
 

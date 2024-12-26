@@ -1,10 +1,13 @@
 ﻿using System;
+using UnityEngine;
 
 namespace _Project.Scripts
 {
     [Serializable]
     public abstract class AnimationKey
     {
-        public abstract string Key { get; }
+        [SerializeField] protected string m_Key;
+
+        public virtual string Key => m_Key;
     }
 }
