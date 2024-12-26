@@ -79,6 +79,10 @@ namespace _Project.Scripts
             }
         }
 
+        /// <summary>
+        /// Method sets ALife state of NPC to all his tasks at once
+        /// </summary>
+        /// <param name="aLifeState"></param>
         public void SetALifeTasksState(NpcALifeState aLifeState)
         {
             foreach (var aiTaskResolver in m_TaskResolvers)
@@ -89,6 +93,12 @@ namespace _Project.Scripts
             m_ActiveTaskResolver.StartResolveTask();
         }
 
+        /// <summary>
+        /// Method called when active task is resolved
+        /// Switches to the next task with highest priority
+        /// </summary>
+        /// <param name="resolver"></param>
+        /// <param name="aiTask"></param>
         private void AiTaskResolverOnTaskResolved(AiTaskResolver resolver, AiTask aiTask)
         {
             resolver.StopResolveTask();
