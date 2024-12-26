@@ -24,7 +24,7 @@ namespace _Project.Scripts
 
         protected override void PostInitialize()
         {
-            SetState<RunState>();
+            SetState<IdleState>();
         }
 
         public void SetState<T>() where T : AbstractState

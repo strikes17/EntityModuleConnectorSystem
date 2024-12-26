@@ -2,6 +2,5 @@
 {
     public class AnimationAttackKey : AnimationKey
     {
-        public override string Key => "Attack";
     }
 }

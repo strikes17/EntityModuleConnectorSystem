@@ -2,6 +2,5 @@
 {
     public class AnimationDeathKey : AnimationKey
     {
-        public override string Key => "Death";
     }
 }

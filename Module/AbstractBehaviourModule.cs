@@ -21,6 +21,10 @@ namespace _Project.Scripts
         public virtual void OnUpdate()
         {
         }
+        
+        public virtual void OnLateUpdate()
+        {
+        }
 
         public virtual int Order => 0;
 
