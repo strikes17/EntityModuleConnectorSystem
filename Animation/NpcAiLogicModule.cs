@@ -1,4 +1,5 @@
 ﻿using System;
+using _Project.Scripts.Camera;
 using UnityEngine;
 
 namespace _Project.Scripts
@@ -8,9 +9,10 @@ namespace _Project.Scripts
     {
         public event Action<Vector3> DecidedToReachPoint = delegate { };
 
-        public void CheckEntity(AbstractEntity entity)
-        {
-            
-        }
+        public event Action<AbstractEntity, NpcEntity> DecidedToInteractWithEntity = delegate { };
+
+        [SerializeField] private NpcPointOfInterestValue m_MinimumPointOfInterestValue;
+
+        public NpcPointOfInterestValue MinimumPointOfInterestValue => m_MinimumPointOfInterestValue;
     }
 }
