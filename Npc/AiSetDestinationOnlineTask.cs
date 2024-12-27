@@ -7,8 +7,8 @@ namespace _Project.Scripts
     [Serializable]
     public class AiSetDestinationOnlineTask : AiOnlineTask
     {
-        private Vector3 m_TargetDestination;
-        private AiNavMeshModule m_AiNavMeshModule;
+        protected Vector3 m_TargetDestination;
+        protected AiNavMeshModule m_AiNavMeshModule;
 
         public AiSetDestinationOnlineTask(AiNavMeshModule navMeshModule, Vector3 targetDestination)
         {
@@ -36,7 +36,7 @@ namespace _Project.Scripts
             m_AiNavMeshModule.ResetDestination();
         }
 
-        private void AiNavMeshModuleOnReachedDestination(AbstractEntity obj)
+        protected virtual void AiNavMeshModuleOnReachedDestination(AbstractEntity obj)
         {
             TaskCompleted(this);
         }

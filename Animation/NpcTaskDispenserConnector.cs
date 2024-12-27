@@ -4,7 +4,6 @@ using System.Collections.Generic;
 using System.Linq;
 using _Project.Scripts.Camera;
 using Redcode.Moroutines;
-using Sirenix.OdinInspector;
 using UnityEngine;
 using Random = UnityEngine.Random;
 
@@ -17,29 +16,17 @@ namespace _Project.Scripts
         [SelfInject] private AiTaskResolverModule m_TaskResolverModule;
         [SelfInject] private NpcAiLogicModule m_NpcAiLogicModule;
         [Inject] private PointOfInterestContainer m_PointOfInterestContainer;
-
-        public event Action<NpcEntity, NpcALifeState> ALifeStateChanged = delegate { };
-
-        [SerializeField, ReadOnly] private NpcALifeState m_NpcALifeState;
-
-        public NpcALifeState NpcALifeState
-        {
-            get => m_NpcALifeState;
-            set
-            {
-                if (m_NpcALifeState != value)
-                {
-                    m_NpcALifeState = value;
-                    OnALifeStateChanged();
-                    Debug.Log($"Npc {m_AbstractEntity.name} is now {m_NpcALifeState.ToString()}");
-                }
-            }
-        }
+        [SelfInject] private NpcALifeModule m_NpcALifeModule;
 
         protected override void Initialize()
         {
-            m_NpcALifeState = NpcALifeState.Online;
+            m_NpcALifeModule.ALifeStateChanged += NpcALifeModuleOnALifeStateChanged;
             Moroutine.Run(Test());
+        }
+
+        private void NpcALifeModuleOnALifeStateChanged(NpcEntity npcEntity, NpcALifeState npcALifeState)
+        {
+            m_TaskResolverModule.SetALifeTasksState(npcALifeState);
         }
 
         private IEnumerator Test()
@@ -69,12 +56,6 @@ namespace _Project.Scripts
             }
         }
 
-        private void OnALifeStateChanged()
-        {
-            m_TaskResolverModule.SetALifeTasksState(m_NpcALifeState);
-            ALifeStateChanged(m_AbstractEntity as NpcEntity, m_NpcALifeState);
-        }
-
         private void CreateWalkToDestinationTask(Vector3 targetPoint)
         {
             AiSetDestinationOfflineTask setDestinationOfflineTask = new AiSetDestinationOfflineTask(m_AiNavMeshModule, targetPoint);
@@ -84,8 +65,8 @@ namespace _Project.Scripts
                 setDestinationOnlineTask, AiTaskPriority.Default);
 
             Debug.Log(
-                $"Npc {m_AbstractEntity.name} decided to go with alife: {NpcALifeState.ToString()}");
-            m_TaskResolverModule.AddTask(setDestinationTaskResolver, NpcALifeState);
+                $"Npc {m_AbstractEntity.name} decided to go with alife: {m_NpcALifeModule.NpcALifeState.ToString()}");
+            m_TaskResolverModule.AddTask(setDestinationTaskResolver, m_NpcALifeModule.NpcALifeState);
         }
     }
 }
