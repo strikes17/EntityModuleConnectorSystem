@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 namespace _Project.Scripts
@@ -18,8 +19,23 @@ namespace _Project.Scripts
 
         private List<AbstractEntity> m_CurrentlyNoticedEntities = new();
 
+        private bool m_IsUpdating = false;
+
+        public override void Initialize(AbstractEntity abstractEntity)
+        {
+            base.Initialize(abstractEntity);
+            AllowPostInitialization(5);
+        }
+
+        protected override void PostInitialize()
+        {
+            base.PostInitialize();
+            m_IsUpdating = true;
+        }
+
         public override void OnUpdate()
         {
+            if(!m_IsUpdating)return;
             var colliders = Physics.OverlapSphere(m_SphereOverlapOriginTransform.position, m_EntityDetectRadius);
             foreach (var collider in colliders)
             {
@@ -27,18 +43,32 @@ namespace _Project.Scripts
                 if (noticedEntity != null)
                 {
                     if (m_CurrentlyNoticedEntities.Contains(noticedEntity))
-                        continue;
-
-                    if (Physics.Raycast(m_VisionTransform.position, noticedEntity.transform.position,
-                            m_MaxVisionDistance))
                     {
-                        var direction = (noticedEntity.transform.position - m_VisionTransform.position).normalized;
-                        var forward = m_VisionTransform.forward;
-                        var angle = Vector3.Angle(direction, forward);
-                        if (angle <= m_Angle)
+                        continue;
+                    }
+
+                    var direction = (noticedEntity.transform.position - m_VisionTransform.position)
+                        .normalized;
+                    Ray ray = new Ray(m_VisionTransform.position, direction);
+                    Debug.DrawRay(ray.origin, ray.direction * m_MaxVisionDistance, Color.red, 4f);
+                    var raycastHits = Physics.RaycastAll(ray, m_MaxVisionDistance).ToList();
+                    if (raycastHits.Count > 0)
+                    {
+                        foreach (var raycastHit in raycastHits)
                         {
-                            m_CurrentlyNoticedEntities.Add(noticedEntity);
-                            NoticedEntity(noticedEntity);
+                            if (raycastHit.collider.gameObject != m_AbstractEntity.gameObject
+                                && raycastHit
+                                    .collider.GetComponent<AbstractEntity>() != null)
+                            {
+                                var forward = m_VisionTransform.forward;
+                                var angle = Vector3.Angle(direction, forward);
+                                if (angle <= m_Angle)
+                                {
+                                    Debug.Log($"A!Notice entity : {noticedEntity.name}");
+                                    m_CurrentlyNoticedEntities.Add(noticedEntity);
+                                    NoticedEntity(noticedEntity);
+                                }
+                            }
                         }
                     }
                 }

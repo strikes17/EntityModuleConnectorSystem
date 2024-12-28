@@ -9,6 +9,7 @@ namespace _Project.Scripts
         public NpcALifeState ALifeState;
 
         public event Action<AiTaskResolver, AiTask> TaskResolved = delegate { };
+        public event Action<AiTaskResolver, AiTask> TaskFailed = delegate { };
 
         public Type OfflineTaskType => m_OfflineTask.GetType();
         public Type OnlineTaskType => m_OnlineTask.GetType();
@@ -35,6 +36,9 @@ namespace _Project.Scripts
 
             m_OnlineTask.TaskCompleted += OnTaskCompleted;
             m_OfflineTask.TaskCompleted += OnTaskCompleted;
+            
+            m_OnlineTask.TaskFailed += OnTaskFailed;
+            m_OfflineTask.TaskFailed += OnTaskFailed;
         }
 
         private void OnTaskCompleted(AiTask task)
@@ -44,6 +48,12 @@ namespace _Project.Scripts
                 m_IsTaskResolved = true;
                 TaskResolved(this, task);
             }
+        }
+        
+        private void OnTaskFailed(AiTask task)
+        {
+            m_IsTaskResolved = false;
+            TaskFailed(this, task);
         }
 
         public void StopResolveTask()

@@ -17,14 +17,15 @@ namespace _Project.Scripts
         }
 
         public override event Action<AiTask> TaskCompleted = delegate { };
+        public override event Action<AiTask> TaskFailed = delegate { };
 
         public override void StartResolve()
         {
             if (m_IsTaskStarted) return;
 
             m_IsTaskStarted = true;
-            m_AiNavMeshModule.ReachedDestination += AiNavMeshModuleOnReachedDestination;
-            m_AiNavMeshModule.SetDestination(m_TargetDestination);
+            m_AiNavMeshModule.ReachedTargetPoint += AiNavMeshModuleOnReachedTargetPoint;
+            m_AiNavMeshModule.StartFollowPathToPoint(m_TargetDestination);
         }
 
         public override void StopResolve()
@@ -32,13 +33,14 @@ namespace _Project.Scripts
             if (!m_IsTaskStarted) return;
 
             m_IsTaskStarted = false;
-            m_AiNavMeshModule.ReachedDestination -= AiNavMeshModuleOnReachedDestination;
+            m_AiNavMeshModule.ReachedTargetPoint -= AiNavMeshModuleOnReachedTargetPoint;
             m_AiNavMeshModule.ResetDestination();
         }
 
-        protected virtual void AiNavMeshModuleOnReachedDestination(AbstractEntity obj)
+        protected virtual void AiNavMeshModuleOnReachedTargetPoint(AbstractEntity obj, Vector3 target)
         {
             TaskCompleted(this);
+            Debug.Log($"Completed task of destintion target point {target}");
         }
     }
 }

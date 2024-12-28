@@ -11,16 +11,28 @@ namespace _Project.Scripts
         
         protected override void Initialize()
         {
-            m_AiNavMeshModule.StartedMovingToDestination += AiNavMeshModuleOnStartedMovingToDestination;
-            m_AiNavMeshModule.ReachedDestination += AiNavMeshModuleOnReachedDestination;
+            m_AiNavMeshModule.StartedMovingToTargetPoint += AiNavMeshModuleOnStartedMovingToTargetPoint;
+            m_AiNavMeshModule.ReachedTargetPoint += AiNavMeshModuleOnReachedTargetPoint;
+            m_AiNavMeshModule.StartedMovingToTargetEntity += AiNavMeshModuleOnStartedMovingToTargetEntity;
+            m_AiNavMeshModule.ReachedTargetEntity += AiNavMeshModuleOnReachedTargetEntity;
         }
 
-        private void AiNavMeshModuleOnReachedDestination(AbstractEntity obj)
+        private void AiNavMeshModuleOnReachedTargetEntity(AbstractEntity arg1, AbstractEntity arg2)
         {
             m_StatesModule.SetState<IdleState>();
         }
 
-        private void AiNavMeshModuleOnStartedMovingToDestination(AbstractEntity arg1, Vector3 arg2)
+        private void AiNavMeshModuleOnStartedMovingToTargetEntity(AbstractEntity arg1, AbstractEntity arg2)
+        {
+            m_StatesModule.SetState<WalkState>();
+        }
+
+        private void AiNavMeshModuleOnReachedTargetPoint(AbstractEntity obj, Vector3 target)
+        {
+            m_StatesModule.SetState<IdleState>();
+        }
+
+        private void AiNavMeshModuleOnStartedMovingToTargetPoint(AbstractEntity arg1, Vector3 arg2)
         {
             m_StatesModule.SetState<WalkState>();
         }

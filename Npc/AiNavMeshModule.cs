@@ -9,13 +9,15 @@ namespace _Project.Scripts
     [Serializable]
     public class AiNavMeshModule : AbstractBehaviourModule
     {
-        public event Action<AbstractEntity> ReachedDestination = delegate { };
-        public event Action<AbstractEntity, Vector3> StartedMovingToDestination = delegate { };
+        public event Action<AbstractEntity, Vector3> ReachedTargetPoint = delegate { };
+        public event Action<AbstractEntity, Vector3> StartedMovingToTargetPoint = delegate { };
+        
+        public event Action<AbstractEntity, AbstractEntity> ReachedTargetEntity= delegate { };
+        public event Action<AbstractEntity, AbstractEntity> StartedMovingToTargetEntity = delegate { };
 
         [SerializeField] private NavMeshAgent m_NavMeshAgent;
 
         private NavMeshPath m_NavMeshPath;
-        public Vector3 AgentPosition => m_AbstractEntity.transform.position;
 
         public float TotalDistanceToDestination
         {
@@ -65,7 +67,8 @@ namespace _Project.Scripts
             return true;
         }
 
-        private Moroutine m_Moroutine;
+        private Moroutine m_FollowPointMoroutine;
+        private Moroutine m_FollowEntityMoroutine;
 
         public NavMeshPath FindPath(Vector3 target)
         {
@@ -76,40 +79,70 @@ namespace _Project.Scripts
 
             return null;
         }
-
-        public void SetDestination(Vector3 target)
+        
+        public void StartFollowPathToEntity(AbstractEntity target)
         {
-            if (m_Moroutine != null)
+            if (m_FollowEntityMoroutine != null)
             {
-                m_Moroutine.Stop();
+                m_FollowEntityMoroutine.Stop();
             }
 
-            m_Moroutine = Moroutine.Run(FollowPath(target));
+            m_FollowEntityMoroutine = Moroutine.Run(FollowPathToEntity(target));
+        }
+
+        public void StartFollowPathToPoint(Vector3 target)
+        {
+            if (m_FollowPointMoroutine != null)
+            {
+                m_FollowPointMoroutine.Stop();
+            }
+
+            m_FollowPointMoroutine = Moroutine.Run(FollowPathToPoint(target));
         }
 
         public void ResetDestination()
         {
             m_NavMeshAgent.ResetPath();
         }
+        
+        private IEnumerator FollowPathToEntity(AbstractEntity target)
+        {
+            m_NavMeshAgent.SetDestination(target.transform.position);
+            m_NavMeshAgent.updateRotation = true;
 
-        private IEnumerator FollowPath(Vector3 target)
+            yield return null;
+
+            StartedMovingToTargetEntity(m_AbstractEntity, target);
+
+            while (m_NavMeshAgent.remainingDistance > 1f)
+            {
+
+                m_NavMeshAgent.SetDestination(target.transform.position);
+                yield return null;
+            }
+
+            bool isgood = m_NavMeshAgent.CalculatePath(target.transform.position, m_NavMeshPath);
+            Debug.Log($"is good: {isgood}");
+            Debug.Log($"remLEFT: {m_NavMeshAgent.remainingDistance}");
+
+            ReachedTargetEntity(m_AbstractEntity, target);
+        }
+
+        private IEnumerator FollowPathToPoint(Vector3 target)
         {
             m_NavMeshAgent.SetPath(m_NavMeshPath);
             m_NavMeshAgent.updateRotation = true;
 
             yield return null;
 
-            StartedMovingToDestination(m_AbstractEntity, target);
+            StartedMovingToTargetPoint(m_AbstractEntity, target);
 
             while (m_NavMeshAgent.remainingDistance > 1f)
             {
-                Vector3 positionOld = AgentPosition;
-                yield return new WaitForEndOfFrame();
-                Vector3 delta = AgentPosition - positionOld;
                 yield return null;
             }
 
-            ReachedDestination(m_AbstractEntity);
+            ReachedTargetPoint(m_AbstractEntity, target);
         }
     }
 }

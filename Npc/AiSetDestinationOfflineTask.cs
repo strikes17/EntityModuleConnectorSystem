@@ -10,6 +10,7 @@ namespace _Project.Scripts
     public class AiSetDestinationOfflineTask : AiOfflineTask
     {
         public override event Action<AiTask> TaskCompleted;
+        public override event Action<AiTask> TaskFailed = delegate { };
 
         private WaitForSeconds m_WaitForSeconds;
 

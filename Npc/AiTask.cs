@@ -8,6 +8,8 @@ namespace _Project.Scripts
     public abstract class AiTask
     {
         public abstract event Action<AiTask> TaskCompleted;
+        public abstract event Action<AiTask> TaskFailed;
+        
         public abstract void StartResolve();
 
         public abstract void StopResolve();
