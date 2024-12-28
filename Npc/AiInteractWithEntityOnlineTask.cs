@@ -10,7 +10,8 @@ namespace _Project.Scripts
         private NpcAiLogicModule m_NpcAiLogicModule;
         private AbstractEntity m_TargetEntity;
 
-        public AiInteractWithEntityOnlineTask(AiNavMeshModule navMeshModule, NpcAiLogicModule npcAiLogicModule, AbstractEntity target)
+        public AiInteractWithEntityOnlineTask(AiNavMeshModule navMeshModule, NpcAiLogicModule npcAiLogicModule,
+            AbstractEntity target)
         {
             m_AiNavMeshModule = navMeshModule;
             m_NpcAiLogicModule = npcAiLogicModule;

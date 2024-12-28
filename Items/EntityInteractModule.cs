@@ -28,19 +28,4 @@ namespace _Project.Scripts
             m_IsInteractable = false;
         }
     }
-
-    [Serializable]
-    public abstract class AbstractUsableItem
-    {
-    }
-
-    public class WeaponItem : AbstractUsableItem
-    {
-        
-    }
-    
-    public class AmmoItem : AbstractUsableItem
-    {
-        
-    }
 }

@@ -8,6 +8,7 @@ namespace _Project.Scripts
     public class PickableWeaponConnector : BehaviourModuleConnector
     {
         [SelfInject] private EntityInteractModule m_EntityInteractModule;
+        [SerializeField] private WeaponDataObject m_WeaponDataObject;
 
         protected override void Initialize()
         {
@@ -22,7 +23,7 @@ namespace _Project.Scripts
                 if (inventoryModule != null)
                 {
                     entity.gameObject.SetActive(false);
-                    WeaponItem weaponItem = new WeaponItem();
+                    WeaponItem weaponItem = new WeaponItem(m_WeaponDataObject);
                     inventoryModule.AddItem(weaponItem);
                 }   
             }
