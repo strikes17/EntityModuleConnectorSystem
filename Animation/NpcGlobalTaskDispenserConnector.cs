@@ -10,7 +10,7 @@ using Random = UnityEngine.Random;
 namespace _Project.Scripts
 {
     [Serializable]
-    public class NpcTaskDispenserConnector : BehaviourModuleConnector
+    public class NpcGlobalTaskDispenserConnector : BehaviourModuleConnector
     {
         [SelfInject] private AiNavMeshModule m_AiNavMeshModule;
         [SelfInject] private AiTaskResolverModule m_TaskResolverModule;
@@ -37,7 +37,7 @@ namespace _Project.Scripts
                 if (!m_TaskResolverModule.HasAnyTask)
                 {
                     Debug.Log($"Polling ai action for npc {m_AbstractEntity.name}");
-
+            
                     if (!m_TaskResolverModule.HasTaskOfType<AiSetDestinationOnlineTask>())
                     {
                         List<NpcPointOfInterestModule> pointOfInterestModules = m_PointOfInterestContainer
@@ -51,7 +51,7 @@ namespace _Project.Scripts
                         }
                     }
                 }
-
+            
                 yield return new WaitForSeconds(2f);
             }
         }

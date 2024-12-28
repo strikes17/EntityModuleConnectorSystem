@@ -16,12 +16,15 @@ namespace _Project.Scripts
 
         private void EntityInteractModuleOnInteractStarted(AbstractEntity entity, AbstractEntity user)
         {
-            var inventoryModule = user.GetBehaviorModuleByType<InventoryModule>();
-            if (inventoryModule != null)
+            if (entity == m_AbstractEntity)
             {
-                entity.gameObject.SetActive(false);
-                WeaponItem weaponItem = new WeaponItem();
-                inventoryModule.AddItem(weaponItem);
+                var inventoryModule = user.GetBehaviorModuleByType<InventoryModule>();
+                if (inventoryModule != null)
+                {
+                    entity.gameObject.SetActive(false);
+                    WeaponItem weaponItem = new WeaponItem();
+                    inventoryModule.AddItem(weaponItem);
+                }   
             }
         }
     }

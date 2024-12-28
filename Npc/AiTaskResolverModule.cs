@@ -68,6 +68,7 @@ namespace _Project.Scripts
 
             m_TaskResolvers.Add(aiTaskResolver);
             aiTaskResolver.TaskResolved += AiTaskResolverOnTaskResolved;
+            aiTaskResolver.TaskFailed += AiTaskResolverOnTaskFailed;
 
             if ((int)aiTaskResolver.Priority > maxPriority)
             {
@@ -77,6 +78,17 @@ namespace _Project.Scripts
                 m_ActiveTaskResolver.ALifeState = aLifeState;
                 m_ActiveTaskResolver.StartResolveTask();
             }
+        }
+
+        private void AiTaskResolverOnTaskFailed(AiTaskResolver resolver, AiTask aiTask)
+        {
+            resolver.StopResolveTask();
+            
+            m_TaskResolvers.Remove(resolver);
+            AiTaskResolver nextResolver = m_TaskResolvers.Aggregate((x, y) => x.Priority > y.Priority ? x : y);
+            ActiveTaskResolver = nextResolver;
+
+            m_ActiveTaskResolver.StartResolveTask();
         }
 
         /// <summary>
