@@ -11,9 +11,22 @@ namespace _Project.Scripts
 
         public event Action<AbstractEntity, NpcEntity> DecidedToInteractWithEntity = delegate { };
 
+        public event Action<AbstractEntity, NpcEntity> DecidedToEliminateEntity = delegate {  };
+
         [SerializeField] private NpcPointOfInterestValue m_MinimumPointOfInterestValue;
 
         public NpcPointOfInterestValue MinimumPointOfInterestValue => m_MinimumPointOfInterestValue;
+
+        public bool TrySetEliminationTarget(AbstractEntity abstractEntity)
+        {
+            if (abstractEntity != null)
+            {
+                DecidedToEliminateEntity(abstractEntity, m_AbstractEntity as NpcEntity);
+                return true;
+            }
+
+            return false;
+        }
 
         public bool TryInteractWithEntity(AbstractEntity abstractEntity)
         {

@@ -50,9 +50,25 @@ namespace _Project.Scripts
                     var npcFractionModule = entity.GetBehaviorModuleByType<NpcFractionModule>();
                     if (m_FractionModule.IsEnemyFraction(npcFractionModule.NpcFraction))
                     {
-                        SetInteractEntityTask(entity, AiTaskPriority.MostImportant, entity);
+                        SetEliminateEntityTask(entity, AiTaskPriority.MostImportant, entity);
                     }
                 }
+            }
+        }
+
+        private void SetEliminateEntityTask(AbstractEntity entity, AiTaskPriority aiTaskPriority,
+            AbstractEntity targetEntity)
+        {
+            if (m_AiNavMeshModule.IsPathValid(targetEntity.transform.position))
+            {
+                AiEliminateEnemiesOnlineTask eliminateEnemiesOnlineTask =
+                    new AiEliminateEnemiesOnlineTask(m_AiNavMeshModule, m_LogicModule, targetEntity);
+                AiSetDestinationOfflineTask checkEntityOfflineTask =
+                    new AiSetDestinationOfflineTask(m_AiNavMeshModule, targetEntity.transform.position);
+                AiTaskResolver aiTaskResolver =
+                    new AiTaskResolver(checkEntityOfflineTask, eliminateEnemiesOnlineTask, aiTaskPriority);
+                Debug.Log($"added task {aiTaskResolver.OnlineTaskType}, {m_NpcALifeModule.NpcALifeState.ToString()}");
+                m_TaskResolverModule.AddTask(aiTaskResolver, m_NpcALifeModule.NpcALifeState);
             }
         }
 
