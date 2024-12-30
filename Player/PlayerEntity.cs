@@ -6,7 +6,7 @@ using UnityEngine;
 namespace _Project.Scripts.Camera
 {
     [Serializable]
-    public class PlayerEntity : AbstractEntity
+    public class PlayerEntity : NpcEntity
     {
         [SerializeField] private PlayerDataObject m_PlayerBaseData;
 

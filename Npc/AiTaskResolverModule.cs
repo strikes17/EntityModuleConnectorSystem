@@ -29,6 +29,19 @@ namespace _Project.Scripts
 
             return false;
         }
+        
+        public T GetTaskOfType<T>() where T : AiTask
+        {
+            foreach (var aiTaskResolver in m_TaskResolvers)
+            {
+                if (aiTaskResolver.OfflineTaskType == typeof(T) || aiTaskResolver.OnlineTaskType == typeof(T))
+                {
+                    return aiTaskResolver.OnlineTask as T;
+                }
+            }
+
+            return null;
+        }
 
         private AiTaskResolver ActiveTaskResolver
         {
@@ -69,13 +82,13 @@ namespace _Project.Scripts
             m_TaskResolvers.Add(aiTaskResolver);
             aiTaskResolver.TaskResolved += AiTaskResolverOnTaskResolved;
             aiTaskResolver.TaskFailed += AiTaskResolverOnTaskFailed;
-
+            aiTaskResolver.ALifeState = aLifeState;
+            
             if ((int)aiTaskResolver.Priority > maxPriority)
             {
                 Debug.Log($"AiTask {aiTaskResolver.Name} priority is higher than {maxPriority}, setting" +
                           $"{aLifeState.ToString()}");
                 ActiveTaskResolver = aiTaskResolver;
-                m_ActiveTaskResolver.ALifeState = aLifeState;
                 m_ActiveTaskResolver.StartResolveTask();
             }
         }

@@ -1,12 +1,15 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
+using AbstractState = _Project.Scripts.AbstractState;
 
 namespace _Project.Scripts
 {
+    [Serializable]
     public class StatesAnimationConnector : BehaviourModuleConnector
     {
         [SerializeField] private AnimationDataObject m_AnimationDataObject;
 
-        [SelfInject] private AnimationModule m_AnimationModule;
+        [SelfInject] private AnimatorStateMachineModule m_AnimatorStateMachineModule;
         [SelfInject] private StatesModule m_StatesModule;
         
         protected override void Initialize()
@@ -17,22 +20,7 @@ namespace _Project.Scripts
         private void StatesModuleOnStateChanged(AbstractState state)
         {
             Debug.Log($"On state changed to {state.GetType()}");
-            if (state.GetType() == typeof(DeathState))
-            {
-                m_AnimationModule.PlayAnimation(m_AnimationDataObject.GetAnimationKey<AnimationDeathKey>());
-            }
-            else if (state.GetType() == typeof(RunState))
-            {
-                m_AnimationModule.PlayAnimation(m_AnimationDataObject.GetAnimationKey<AnimationRunKey>());
-            }
-            else if (state.GetType() == typeof(WalkState))
-            {
-                m_AnimationModule.PlayAnimation(m_AnimationDataObject.GetAnimationKey<AnimationWalkKey>());
-            }
-            else if (state.GetType() == typeof(IdleState))
-            {
-                m_AnimationModule.PlayAnimation(m_AnimationDataObject.GetAnimationKey<AnimationIdleKey>());
-            }
+            m_AnimatorStateMachineModule.SetAnimationState(m_AnimationDataObject.GetAnimationStateName(state.GetType()));
         }
     }
 }

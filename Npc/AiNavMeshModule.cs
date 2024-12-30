@@ -11,8 +11,8 @@ namespace _Project.Scripts
     {
         public event Action<AbstractEntity, Vector3> ReachedTargetPoint = delegate { };
         public event Action<AbstractEntity, Vector3> StartedMovingToTargetPoint = delegate { };
-        
-        public event Action<AbstractEntity, AbstractEntity> ReachedTargetEntity= delegate { };
+
+        public event Action<AbstractEntity, AbstractEntity> ReachedTargetEntity = delegate { };
         public event Action<AbstractEntity, AbstractEntity> StartedMovingToTargetEntity = delegate { };
 
         [SerializeField] private NavMeshAgent m_NavMeshAgent;
@@ -79,7 +79,7 @@ namespace _Project.Scripts
 
             return null;
         }
-        
+
         public void StartFollowPathToEntity(AbstractEntity target)
         {
             if (m_FollowEntityMoroutine != null)
@@ -104,9 +104,11 @@ namespace _Project.Scripts
         {
             m_NavMeshAgent.ResetPath();
         }
-        
+
         private IEnumerator FollowPathToEntity(AbstractEntity target)
         {
+            if(!m_AbstractEntity.gameObject.activeSelf)
+                yield break;
             m_NavMeshAgent.SetDestination(target.transform.position);
             m_NavMeshAgent.updateRotation = true;
 
@@ -114,22 +116,19 @@ namespace _Project.Scripts
 
             StartedMovingToTargetEntity(m_AbstractEntity, target);
 
-            while (m_NavMeshAgent.remainingDistance > 1f)
+            while (m_AbstractEntity.gameObject.activeSelf && m_NavMeshAgent.remainingDistance > 1f)
             {
-
                 m_NavMeshAgent.SetDestination(target.transform.position);
                 yield return null;
             }
-
-            bool isgood = m_NavMeshAgent.CalculatePath(target.transform.position, m_NavMeshPath);
-            Debug.Log($"is good: {isgood}");
-            Debug.Log($"remLEFT: {m_NavMeshAgent.remainingDistance}");
 
             ReachedTargetEntity(m_AbstractEntity, target);
         }
 
         private IEnumerator FollowPathToPoint(Vector3 target)
         {
+            if(!m_AbstractEntity.gameObject.activeSelf)
+                yield break;
             m_NavMeshAgent.SetPath(m_NavMeshPath);
             m_NavMeshAgent.updateRotation = true;
 
@@ -137,7 +136,7 @@ namespace _Project.Scripts
 
             StartedMovingToTargetPoint(m_AbstractEntity, target);
 
-            while (m_NavMeshAgent.remainingDistance > 1f)
+            while (m_AbstractEntity.gameObject.activeSelf && m_NavMeshAgent.remainingDistance > 1f)
             {
                 yield return null;
             }

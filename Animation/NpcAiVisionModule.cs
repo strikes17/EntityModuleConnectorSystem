@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Sirenix.OdinInspector;
 using UnityEngine;
 
 namespace _Project.Scripts
@@ -9,7 +10,8 @@ namespace _Project.Scripts
     public class NpcAiVisionModule : AbstractBehaviourModule
     {
         public event Action<AbstractEntity> NoticedEntity = delegate { };
-        public event Action<AbstractEntity> EntityLostFromSight = delegate { };
+        public event Action<AbstractEntity> TargetEntityLost = delegate { };
+        public event Action<AbstractEntity> TargetEntityIsNotVisible = delegate { };
 
         [SerializeField] private float m_Angle;
         [SerializeField] private float m_MaxVisionDistance;
@@ -17,13 +19,19 @@ namespace _Project.Scripts
         [SerializeField] private Transform m_VisionTransform;
         [SerializeField] private Transform m_SphereOverlapOriginTransform;
 
-        private List<AbstractEntity> m_CurrentlyNoticedEntities = new();
+        [SerializeField, ReadOnly] private List<AbstractEntity> m_CurrentlyNoticedEntities = new();
+        [SerializeField, ReadOnly] private List<AbstractEntity> m_CurrentlySeeingEntities = new();
+
+        private int m_EntityLayerMask;
+
+        public List<AbstractEntity> CurrentlySeeingEntities => m_CurrentlySeeingEntities;
 
         private bool m_IsUpdating = false;
 
         public override void Initialize(AbstractEntity abstractEntity)
         {
             base.Initialize(abstractEntity);
+            m_EntityLayerMask = 1 << LayerMask.NameToLayer("Entity");
             AllowPostInitialization(5);
         }
 
@@ -35,8 +43,9 @@ namespace _Project.Scripts
 
         public override void OnUpdate()
         {
-            if(!m_IsUpdating)return;
-            var colliders = Physics.OverlapSphere(m_SphereOverlapOriginTransform.position, m_EntityDetectRadius);
+            if (!m_IsUpdating) return;
+            var colliders = Physics.OverlapSphere(m_SphereOverlapOriginTransform.position, m_EntityDetectRadius,
+                m_EntityLayerMask);
             foreach (var collider in colliders)
             {
                 var noticedEntity = collider.GetComponent<AbstractEntity>();
@@ -81,7 +90,40 @@ namespace _Project.Scripts
                     m_MaxVisionDistance)
                 {
                     m_CurrentlyNoticedEntities.Remove(currentlyNoticedEntity);
-                    EntityLostFromSight(currentlyNoticedEntity);
+                    m_CurrentlySeeingEntities.Remove(currentlyNoticedEntity);
+                    TargetEntityLost(currentlyNoticedEntity);
+                    TargetEntityIsNotVisible(currentlyNoticedEntity);
+                    continue;
+                }
+
+                var direction = (currentlyNoticedEntity.transform.position - m_VisionTransform.position)
+                    .normalized;
+                Ray ray = new Ray(m_VisionTransform.position, direction);
+                var raycastHits = Physics.RaycastAll(ray, m_MaxVisionDistance).ToList();
+                if (raycastHits.Count > 0)
+                {
+                    foreach (var raycastHit in raycastHits)
+                    {
+                        var forward = m_VisionTransform.forward;
+                        var angle = Vector3.Angle(direction, forward);
+                        if (raycastHit.collider.gameObject != m_AbstractEntity.gameObject
+                            && raycastHit
+                                .collider.GetComponent<AbstractEntity>() != null && angle <= m_Angle)
+                        {
+                            if (!m_CurrentlySeeingEntities.Contains(currentlyNoticedEntity))
+                            {
+                                m_CurrentlySeeingEntities.Add(currentlyNoticedEntity);
+                            }
+                        }
+                        else
+                        {
+                            if (m_CurrentlySeeingEntities.Contains(currentlyNoticedEntity))
+                            {
+                                m_CurrentlySeeingEntities.Remove(currentlyNoticedEntity);
+                                TargetEntityIsNotVisible(currentlyNoticedEntity);
+                            }
+                        }
+                    }
                 }
             }
         }
