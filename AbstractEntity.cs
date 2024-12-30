@@ -30,6 +30,11 @@ namespace _Project.Scripts
 
         public IEnumerable<BehaviourModuleConnector> Connectors => m_Connectors;
 
+        private void OnValidate()
+        {
+            gameObject.layer = LayerMask.NameToLayer("Entity");
+        }
+
         public List<T> GetBehaviorModulesCollectionByType<T>() where T : AbstractBehaviourModule
         {
             return m_BehaviourModules.Where(x =>

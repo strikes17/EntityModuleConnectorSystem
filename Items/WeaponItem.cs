@@ -7,7 +7,7 @@ namespace _Project.Scripts
         public WeaponItem(AbstractPickableItemDataObject itemDataObject) : base(itemDataObject)
         {
             var weaponDataObject = itemDataObject as WeaponDataObject;
-            var weaponEntity = GameObject.Instantiate(weaponDataObject.WeaponEntity);
+            var weaponEntity = Object.Instantiate(weaponDataObject.WeaponEntity);
             m_UsableItemEntity = weaponEntity;
         }
     }

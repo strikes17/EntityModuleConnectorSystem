@@ -14,14 +14,18 @@ namespace _Project.Scripts
         public Type OfflineTaskType => m_OfflineTask.GetType();
         public Type OnlineTaskType => m_OnlineTask.GetType();
 
+        public AiOfflineTask OfflineTask => m_OfflineTask;
+
+        public AiOnlineTask OnlineTask => m_OnlineTask;
+
         public AiTaskPriority Priority => m_Priority;
 
         public string Name => m_OnlineTask.GetType().ToString();
 
         [SerializeField] private AiTaskPriority m_Priority;
 
-        [SerializeField] private AiOfflineTask m_OfflineTask;
-        [SerializeField] private AiOnlineTask m_OnlineTask;
+        [SerializeReference] private AiOfflineTask m_OfflineTask;
+        [SerializeReference] private AiOnlineTask m_OnlineTask;
 
         [SerializeField] private bool m_IsTaskResolved;
 

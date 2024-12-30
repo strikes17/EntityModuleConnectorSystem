@@ -18,12 +18,19 @@ namespace _Project.Scripts
         protected override void Initialize()
         {
             m_VisionModule.NoticedEntity += VisionModuleOnNoticedEntity;
-            m_VisionModule.EntityLostFromSight += VisionModuleOnEntityLostFromSight;
+            m_VisionModule.TargetEntityLost += VisionModuleOnTargetEntityLost;
         }
 
-        private void VisionModuleOnEntityLostFromSight(AbstractEntity obj)
+        private void VisionModuleOnTargetEntityLost(AbstractEntity entity)
         {
-            // m_TaskResolverModule.HasTaskOfType<>()
+            if (entity.GetType() == typeof(NpcEntity))
+            {
+                var task = m_TaskResolverModule.GetTaskOfType<AiEliminateEnemiesOnlineTask>();
+                if (task != null)
+                {
+                    // task.RemoveTarget(entity as NpcEntity);
+                }
+            }
         }
 
         private void VisionModuleOnNoticedEntity(AbstractEntity entity)
@@ -31,26 +38,28 @@ namespace _Project.Scripts
             var entityInteractModule = entity.GetBehaviorModuleByType<EntityInteractModule>();
             if (entityInteractModule != null)
             {
-                if (entityInteractModule.IsInteractable && entityInteractModule.PointOfInterestValue != NpcPointOfInterestValue.None)
+                if (entityInteractModule.IsInteractable &&
+                    entityInteractModule.PointOfInterestValue != NpcPointOfInterestValue.None)
                 {
                     int rnd = Random.Range(0 + 5 * (int)entityInteractModule.PointOfInterestValue, 100);
                     if (rnd >= 50)
                     {
                         if (entityInteractModule.PointOfInterestValue >= m_LogicModule.MinimumPointOfInterestValue)
                         {
-                            SetInteractEntityTask(entity, AiTaskPriority.Important, entity);
+                            SetInteractEntityTask(m_AbstractEntity, AiTaskPriority.Important, entity);
                         }
-                    }   
+                    }
                 }
             }
             else
             {
-                if (entity.GetType() == typeof(NpcEntity))
+                if (entity is NpcEntity)
                 {
+                    Debug.Log($"Noticed npc: {entity.name}");
                     var npcFractionModule = entity.GetBehaviorModuleByType<NpcFractionModule>();
                     if (m_FractionModule.IsEnemyFraction(npcFractionModule.NpcFraction))
                     {
-                        SetEliminateEntityTask(entity, AiTaskPriority.MostImportant, entity);
+                        SetEliminateEntityTask(m_AbstractEntity, AiTaskPriority.MostImportant, entity);
                     }
                 }
             }
@@ -59,12 +68,20 @@ namespace _Project.Scripts
         private void SetEliminateEntityTask(AbstractEntity entity, AiTaskPriority aiTaskPriority,
             AbstractEntity targetEntity)
         {
-            if (m_AiNavMeshModule.IsPathValid(targetEntity.transform.position))
+            var task = m_TaskResolverModule.GetTaskOfType<AiEliminateEnemiesOnlineTask>();
+            if (task != null)
+            {
+                task.AddTarget(targetEntity as NpcEntity);
+            }
+            else
             {
                 AiEliminateEnemiesOnlineTask eliminateEnemiesOnlineTask =
-                    new AiEliminateEnemiesOnlineTask(m_AiNavMeshModule, m_LogicModule, targetEntity);
+                    new AiEliminateEnemiesOnlineTask(entity as NpcEntity, m_AiNavMeshModule, m_LogicModule, m_VisionModule);
                 AiSetDestinationOfflineTask checkEntityOfflineTask =
                     new AiSetDestinationOfflineTask(m_AiNavMeshModule, targetEntity.transform.position);
+
+                eliminateEnemiesOnlineTask.AddTarget(targetEntity as NpcEntity);
+
                 AiTaskResolver aiTaskResolver =
                     new AiTaskResolver(checkEntityOfflineTask, eliminateEnemiesOnlineTask, aiTaskPriority);
                 Debug.Log($"added task {aiTaskResolver.OnlineTaskType}, {m_NpcALifeModule.NpcALifeState.ToString()}");
