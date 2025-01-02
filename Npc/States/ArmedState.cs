@@ -1,6 +1,6 @@
 ﻿namespace _Project.Scripts
 {
-    public class RunArmedState : AbstractState
+    public class ArmedState : AbstractState
     {
         
     }

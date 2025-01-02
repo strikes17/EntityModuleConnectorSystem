@@ -1,6 +1,6 @@
 ﻿namespace _Project.Scripts
 {
-    public class IdleArmedState : AbstractState
+    public class IntimidatingState : AbstractState
     {
         
     }

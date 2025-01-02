@@ -17,6 +17,7 @@ namespace _Project.Scripts
         [SelfInject] private NpcAiLogicModule m_NpcAiLogicModule;
         [Inject] private PointOfInterestContainer m_PointOfInterestContainer;
         [SelfInject] private NpcALifeModule m_NpcALifeModule;
+        [SelfInject] private SkinMeshAnimationModule m_SkinMeshAnimationModule;
 
         protected override void Initialize()
         {
@@ -44,8 +45,8 @@ namespace _Project.Scripts
                             .ContainerCollection.Select(x =>
                                 x.GetBehaviorModuleByType<NpcPointOfInterestModule>()).ToList();
                         int rnd = Random.Range(0, pointOfInterestModules.Count);
-                        var targetPoint = pointOfInterestModules[rnd].Position;
-                        if (m_AiNavMeshModule.IsPathValid(targetPoint))
+                        var targetPoint = pointOfInterestModules[rnd].Transform;
+                        if (m_AiNavMeshModule.IsPathValid(targetPoint.position))
                         {
                             CreateWalkToDestinationTask(targetPoint);
                         }
@@ -56,11 +57,11 @@ namespace _Project.Scripts
             }
         }
 
-        private void CreateWalkToDestinationTask(Vector3 targetPoint)
+        private void CreateWalkToDestinationTask(Transform targetPoint)
         {
-            AiSetDestinationOfflineTask setDestinationOfflineTask = new AiSetDestinationOfflineTask(m_AiNavMeshModule, targetPoint);
+            AiSetDestinationOfflineTask setDestinationOfflineTask = new AiSetDestinationOfflineTask(m_AiNavMeshModule, targetPoint.position);
             AiSetDestinationOnlineTask setDestinationOnlineTask =
-                new AiSetDestinationOnlineTask(m_AiNavMeshModule, targetPoint);
+                new AiSetDestinationOnlineTask(m_AiNavMeshModule, targetPoint, m_SkinMeshAnimationModule);
             AiTaskResolver setDestinationTaskResolver = new AiTaskResolver(setDestinationOfflineTask,
                 setDestinationOnlineTask, AiTaskPriority.Default);
 

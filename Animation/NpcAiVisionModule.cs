@@ -10,23 +10,22 @@ namespace _Project.Scripts
     public class NpcAiVisionModule : AbstractBehaviourModule
     {
         public event Action<AbstractEntity> NoticedEntity = delegate { };
-        public event Action<AbstractEntity> TargetEntityLost = delegate { };
-        public event Action<AbstractEntity> TargetEntityIsNotVisible = delegate { };
+        public event Action<AbstractEntity> EntityIsLost = delegate { };
 
         [SerializeField] private float m_Angle;
         [SerializeField] private float m_MaxVisionDistance;
         [SerializeField] private float m_EntityDetectRadius;
         [SerializeField] private Transform m_VisionTransform;
         [SerializeField] private Transform m_SphereOverlapOriginTransform;
+        [SerializeField] private Collider m_Collider;
 
-        [SerializeField, ReadOnly] private List<AbstractEntity> m_CurrentlyNoticedEntities = new();
         [SerializeField, ReadOnly] private List<AbstractEntity> m_CurrentlySeeingEntities = new();
 
         private int m_EntityLayerMask;
 
-        public List<AbstractEntity> CurrentlySeeingEntities => m_CurrentlySeeingEntities;
-
         private bool m_IsUpdating = false;
+
+        private RaycastHit m_RaycastHit;
 
         public override void Initialize(AbstractEntity abstractEntity)
         {
@@ -49,82 +48,48 @@ namespace _Project.Scripts
             foreach (var collider in colliders)
             {
                 var noticedEntity = collider.GetComponent<AbstractEntity>();
+                var direction = (noticedEntity.transform.position - m_VisionTransform.position)
+                    .normalized;
+                Ray ray = new Ray(m_VisionTransform.position, direction);
                 if (noticedEntity != null)
                 {
-                    if (m_CurrentlyNoticedEntities.Contains(noticedEntity))
+                    // Debug.DrawRay(ray.origin, ray.direction * m_MaxVisionDistance, Color.red, 4f);
+                    var forward = m_VisionTransform.forward;
+                    var angle = Vector3.Angle(direction, forward);
+                    m_Collider.enabled = false;
+                    if (Physics.Raycast(ray.origin, ray.direction, out m_RaycastHit, m_MaxVisionDistance))
                     {
-                        continue;
-                    }
-
-                    var direction = (noticedEntity.transform.position - m_VisionTransform.position)
-                        .normalized;
-                    Ray ray = new Ray(m_VisionTransform.position, direction);
-                    Debug.DrawRay(ray.origin, ray.direction * m_MaxVisionDistance, Color.red, 4f);
-                    var raycastHits = Physics.RaycastAll(ray, m_MaxVisionDistance).ToList();
-                    if (raycastHits.Count > 0)
-                    {
-                        foreach (var raycastHit in raycastHits)
+                        if (m_RaycastHit.collider.gameObject != m_AbstractEntity.gameObject
+                            && m_RaycastHit
+                                .collider.GetComponent<AbstractEntity>() != null && angle <= m_Angle)
                         {
-                            if (raycastHit.collider.gameObject != m_AbstractEntity.gameObject
-                                && raycastHit
-                                    .collider.GetComponent<AbstractEntity>() != null)
+                            if (!m_CurrentlySeeingEntities.Contains(noticedEntity))
                             {
-                                var forward = m_VisionTransform.forward;
-                                var angle = Vector3.Angle(direction, forward);
-                                if (angle <= m_Angle)
-                                {
-                                    Debug.Log($"A!Notice entity : {noticedEntity.name}");
-                                    m_CurrentlyNoticedEntities.Add(noticedEntity);
-                                    NoticedEntity(noticedEntity);
-                                }
+                                m_CurrentlySeeingEntities.Add(noticedEntity);
+                                NoticedEntity(noticedEntity);
                             }
                         }
                     }
+
+                    m_Collider.enabled = true;
                 }
             }
 
-            for (var i = 0; i < m_CurrentlyNoticedEntities.Count; i++)
+            for (var i = 0; i < m_CurrentlySeeingEntities.Count; i++)
             {
-                var currentlyNoticedEntity = m_CurrentlyNoticedEntities[i];
-                if (Vector3.Distance(m_VisionTransform.position, currentlyNoticedEntity.transform.position) >
-                    m_MaxVisionDistance)
-                {
-                    m_CurrentlyNoticedEntities.Remove(currentlyNoticedEntity);
-                    m_CurrentlySeeingEntities.Remove(currentlyNoticedEntity);
-                    TargetEntityLost(currentlyNoticedEntity);
-                    TargetEntityIsNotVisible(currentlyNoticedEntity);
-                    continue;
-                }
-
-                var direction = (currentlyNoticedEntity.transform.position - m_VisionTransform.position)
+                var noticedEntity = m_CurrentlySeeingEntities[i];
+                var direction = (noticedEntity.transform.position - m_VisionTransform.position)
                     .normalized;
                 Ray ray = new Ray(m_VisionTransform.position, direction);
-                var raycastHits = Physics.RaycastAll(ray, m_MaxVisionDistance).ToList();
-                if (raycastHits.Count > 0)
+                var forward = m_VisionTransform.forward;
+                var angle = Vector3.Angle(direction, forward);
+                m_Collider.enabled = false;
+                if (!Physics.Raycast(ray.origin, ray.direction, out m_RaycastHit, m_MaxVisionDistance) || angle > m_Angle)
                 {
-                    foreach (var raycastHit in raycastHits)
-                    {
-                        var forward = m_VisionTransform.forward;
-                        var angle = Vector3.Angle(direction, forward);
-                        if (raycastHit.collider.gameObject != m_AbstractEntity.gameObject
-                            && raycastHit
-                                .collider.GetComponent<AbstractEntity>() != null && angle <= m_Angle)
-                        {
-                            if (!m_CurrentlySeeingEntities.Contains(currentlyNoticedEntity))
-                            {
-                                m_CurrentlySeeingEntities.Add(currentlyNoticedEntity);
-                            }
-                        }
-                        else
-                        {
-                            if (m_CurrentlySeeingEntities.Contains(currentlyNoticedEntity))
-                            {
-                                m_CurrentlySeeingEntities.Remove(currentlyNoticedEntity);
-                                TargetEntityIsNotVisible(currentlyNoticedEntity);
-                            }
-                        }
-                    }
+                    m_CurrentlySeeingEntities.Remove(noticedEntity);
+                    EntityIsLost(noticedEntity);
                 }
+                m_Collider.enabled = true;
             }
         }
     }

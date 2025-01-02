@@ -14,14 +14,15 @@ namespace _Project.Scripts
         [SelfInject] private AiNavMeshModule m_AiNavMeshModule;
         [SelfInject] private NpcALifeModule m_NpcALifeModule;
         [SelfInject] private NpcFractionModule m_FractionModule;
+        [SelfInject] private SkinMeshAnimationModule m_SkinMeshAnimationModule;
 
         protected override void Initialize()
         {
             m_VisionModule.NoticedEntity += VisionModuleOnNoticedEntity;
-            m_VisionModule.TargetEntityLost += VisionModuleOnTargetEntityLost;
+            m_VisionModule.EntityIsLost += VisionModuleOnEntityIsLost;
         }
 
-        private void VisionModuleOnTargetEntityLost(AbstractEntity entity)
+        private void VisionModuleOnEntityIsLost(AbstractEntity entity)
         {
             if (entity.GetType() == typeof(NpcEntity))
             {
@@ -76,11 +77,12 @@ namespace _Project.Scripts
             else
             {
                 AiEliminateEnemiesOnlineTask eliminateEnemiesOnlineTask =
-                    new AiEliminateEnemiesOnlineTask(entity as NpcEntity, m_AiNavMeshModule, m_LogicModule, m_VisionModule);
+                    new AiEliminateEnemiesOnlineTask(entity as NpcEntity, m_AiNavMeshModule, m_LogicModule,
+                        m_VisionModule, m_SkinMeshAnimationModule);
                 AiSetDestinationOfflineTask checkEntityOfflineTask =
                     new AiSetDestinationOfflineTask(m_AiNavMeshModule, targetEntity.transform.position);
 
-                eliminateEnemiesOnlineTask.AddTarget(targetEntity as NpcEntity);
+                eliminateEnemiesOnlineTask.AddTarget(targetEntity);
 
                 AiTaskResolver aiTaskResolver =
                     new AiTaskResolver(checkEntityOfflineTask, eliminateEnemiesOnlineTask, aiTaskPriority);
@@ -95,7 +97,7 @@ namespace _Project.Scripts
             if (m_AiNavMeshModule.IsPathValid(targetEntity.transform.position))
             {
                 AiInteractWithEntityOnlineTask checkEntityOnlineTask =
-                    new AiInteractWithEntityOnlineTask(m_AiNavMeshModule, m_LogicModule, targetEntity);
+                    new AiInteractWithEntityOnlineTask(m_AiNavMeshModule, m_LogicModule, targetEntity, m_SkinMeshAnimationModule);
                 AiSetDestinationOfflineTask checkEntityOfflineTask =
                     new AiSetDestinationOfflineTask(m_AiNavMeshModule, targetEntity.transform.position);
                 AiTaskResolver aiTaskResolver =

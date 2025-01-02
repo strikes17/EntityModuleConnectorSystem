@@ -2,7 +2,9 @@
 using System.Collections;
 using Redcode.Moroutines;
 using Sirenix.OdinInspector;
+#if UNITY_EDITOR
 using Sirenix.Utilities.Editor;
+#endif
 using UnityEngine;
 
 namespace _Project.Scripts
@@ -10,11 +12,13 @@ namespace _Project.Scripts
     [Serializable]
     public abstract class AbstractBehaviourModule : IUpdateListener, IRegisterUpdateListener
     {
+#if UNITY_EDITOR
         [Button("Copy type")]
         private void CopyTypeString()
         {
             Clipboard.Copy(GetType().ToString());
         }
+#endif
 
         protected AbstractEntity m_AbstractEntity;
 
@@ -25,7 +29,7 @@ namespace _Project.Scripts
         public virtual void OnLateUpdate()
         {
         }
-
+        
         public virtual int Order => 0;
 
         public virtual void Initialize(AbstractEntity abstractEntity)
