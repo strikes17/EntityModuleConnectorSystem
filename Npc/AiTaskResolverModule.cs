@@ -86,7 +86,11 @@ namespace _Project.Scripts
             
             if ((int)aiTaskResolver.Priority > maxPriority)
             {
-                Debug.Log($"AiTask {aiTaskResolver.Name} priority is higher than {maxPriority}, setting" +
+                if (m_ActiveTaskResolver != null)
+                {
+                    m_ActiveTaskResolver.StopResolveTask();
+                }
+                Debug.Log($"AiTask {aiTaskResolver.OnlineTaskType} priority is higher than {maxPriority}, setting" +
                           $"{aLifeState.ToString()}");
                 ActiveTaskResolver = aiTaskResolver;
                 m_ActiveTaskResolver.StartResolveTask();

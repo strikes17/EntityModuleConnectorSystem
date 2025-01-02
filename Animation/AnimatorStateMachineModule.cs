@@ -7,6 +7,7 @@ namespace _Project.Scripts
     public class AnimatorStateMachineModule : AbstractBehaviourModule
     {
         [SerializeField] private Animator m_Animator;
+        [SerializeField] private Transform m_Transform;
 
         public void SetAnimationState(string stateName)
         {

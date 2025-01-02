@@ -7,13 +7,15 @@ namespace _Project.Scripts
     [Serializable]
     public class AiSetDestinationOnlineTask : AiOnlineTask
     {
-        protected Vector3 m_TargetDestination;
+        protected Transform m_TargetDestination;
         protected AiNavMeshModule m_AiNavMeshModule;
+        protected SkinMeshAnimationModule m_SkinMeshAnimationModule;
 
-        public AiSetDestinationOnlineTask(AiNavMeshModule navMeshModule, Vector3 targetDestination)
+        public AiSetDestinationOnlineTask(AiNavMeshModule navMeshModule, Transform targetDestination, SkinMeshAnimationModule skinMeshAnimationModule)
         {
             m_AiNavMeshModule = navMeshModule;
             m_TargetDestination = targetDestination;
+            m_SkinMeshAnimationModule = skinMeshAnimationModule;
         }
 
         public override event Action<AiTask> TaskCompleted = delegate { };
@@ -22,10 +24,9 @@ namespace _Project.Scripts
         public override void StartResolve()
         {
             if (m_IsTaskStarted) return;
-
             m_IsTaskStarted = true;
             m_AiNavMeshModule.ReachedTargetPoint += AiNavMeshModuleOnReachedTargetPoint;
-            m_AiNavMeshModule.StartFollowPathToPoint(m_TargetDestination);
+            m_AiNavMeshModule.StartFollowPathToPoint(m_TargetDestination.position, true);
         }
 
         public override void StopResolve()

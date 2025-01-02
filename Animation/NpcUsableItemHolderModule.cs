@@ -27,9 +27,14 @@ namespace _Project.Scripts
                 oldWeaponItem.UsableItemEntity.gameObject.SetActive(false);
             }
 
+            var data = weaponItem.DataObject as WeaponDataObject;
+
             var usableItemEntity = weaponItem.UsableItemEntity;
-            usableItemEntity.gameObject.SetActive(true);
             usableItemEntity.transform.SetParent(m_WeaponHandsTransform);
+            usableItemEntity.transform.localPosition = data.NpcHandsPosition;
+            usableItemEntity.transform.localRotation = Quaternion.Euler(data.NpcHandsRotation);
+            usableItemEntity.transform.localScale = data.NpcHandsScale;
+            usableItemEntity.gameObject.SetActive(true);
         }
     }
 }

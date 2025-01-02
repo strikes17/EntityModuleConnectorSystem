@@ -12,15 +12,4 @@ namespace _Project.Scripts.Camera
             m_AnimationModule.PlayAnimation("walk_unarmed");
         }
     }
-
-    [Serializable]
-    public class NpcStateMachineModule : AbstractBehaviourModule
-    {
-        public override void Initialize(AbstractEntity abstractEntity)
-        {
-            base.Initialize(abstractEntity);
-        }
-    }
-    
-    
 }

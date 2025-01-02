@@ -7,6 +7,18 @@ namespace _Project.Scripts
     {
         [SerializeField] private WeaponType m_WeaponType;
         [SerializeField] private WeaponEntity m_WeaponEntity;
+        [SerializeField] private Vector3 m_NpcHandsPosition;
+        [SerializeField] private Vector3 m_NpcHandsRotation;
+        [SerializeField] private Vector3 m_NpcHandsScale;
+        [SerializeField] private WeaponStatsData m_BaseStatsData;
+
+        public WeaponStatsData BaseStatsData => m_BaseStatsData;
+
+        public Vector3 NpcHandsPosition => m_NpcHandsPosition;
+
+        public Vector3 NpcHandsRotation => m_NpcHandsRotation;
+
+        public Vector3 NpcHandsScale => m_NpcHandsScale;
 
         public WeaponEntity WeaponEntity => m_WeaponEntity;
 

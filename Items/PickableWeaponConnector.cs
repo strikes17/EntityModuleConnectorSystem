@@ -7,6 +7,7 @@ namespace _Project.Scripts
     [Serializable]
     public class PickableWeaponConnector : BehaviourModuleConnector
     {
+        [Inject] private EntityGameUpdateHandlerRegisterModule m_HandlerRegisterModule;
         [SelfInject] private EntityInteractModule m_EntityInteractModule;
         [SerializeField] private WeaponDataObject m_WeaponDataObject;
 
@@ -25,6 +26,7 @@ namespace _Project.Scripts
                     entity.gameObject.SetActive(false);
                     WeaponItem weaponItem = new WeaponItem(m_WeaponDataObject);
                     inventoryModule.AddItem(weaponItem);
+                    m_HandlerRegisterModule.Register(weaponItem.UsableItemEntity);
                 }   
             }
         }

@@ -12,6 +12,8 @@ namespace _Project.Scripts
 
         public NpcPointOfInterestValue PointOfInterestValue => m_PointOfInterestValue;
 
+        public Transform Transform => m_Transform;
+        
         public Vector3 Position => m_Transform.position;
         
         public bool IsStatic => m_IsStatic;

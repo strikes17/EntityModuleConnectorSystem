@@ -9,6 +9,7 @@ namespace _Project.Scripts
         public void PlayAnimation(string animationName)
         {
             m_Animator.Play(animationName);
+            Debug.Log($"Play state: {animationName}");
         }
     }
 }

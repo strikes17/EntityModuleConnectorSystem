@@ -24,13 +24,13 @@ namespace _Project.Scripts
 
         protected override void PostInitialize()
         {
-            SetState<IdleState>();
+            SetState<CalmState>();
         }
 
         public void SetState<T>() where T : AbstractState
         {
             var state = m_AbstractStates.FirstOrDefault(x => x.GetType() == typeof(T));
-            if (state != null)
+            if (state != null && m_CurrentState != state)
             {
                 m_CurrentState = state;
                 StateChanged(m_CurrentState);

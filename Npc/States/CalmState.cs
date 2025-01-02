@@ -1,6 +1,6 @@
 ﻿namespace _Project.Scripts
 {
-    public class WalkState : AbstractState
+    public class CalmState : AbstractState
     {
     }
 }

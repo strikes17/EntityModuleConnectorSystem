@@ -9,13 +9,15 @@ namespace _Project.Scripts
         private AiNavMeshModule m_AiNavMeshModule;
         private NpcAiLogicModule m_NpcAiLogicModule;
         private AbstractEntity m_TargetEntity;
+        private SkinMeshAnimationModule m_SkinMeshAnimationModule;
 
         public AiInteractWithEntityOnlineTask(AiNavMeshModule navMeshModule, NpcAiLogicModule npcAiLogicModule,
-            AbstractEntity target)
+            AbstractEntity target, SkinMeshAnimationModule skinMeshAnimationModule)
         {
             m_AiNavMeshModule = navMeshModule;
             m_NpcAiLogicModule = npcAiLogicModule;
             m_TargetEntity = target;
+            m_SkinMeshAnimationModule = skinMeshAnimationModule;
         }
 
         public override event Action<AiTask> TaskCompleted = delegate { };
@@ -27,7 +29,7 @@ namespace _Project.Scripts
 
             m_IsTaskStarted = true;
             m_AiNavMeshModule.ReachedTargetEntity += OnReachedTargetEntity;
-            m_AiNavMeshModule.StartFollowPathToEntity(m_TargetEntity);
+            m_AiNavMeshModule.StartFollowPathToEntity(m_TargetEntity, 1f, true);
         }
 
         public override void StopResolve()
@@ -35,7 +37,6 @@ namespace _Project.Scripts
             if (!m_IsTaskStarted) return;
 
             m_IsTaskStarted = false;
-            m_AiNavMeshModule.ReachedTargetEntity -= OnReachedTargetEntity;
             m_AiNavMeshModule.ResetDestination();
         }
 
