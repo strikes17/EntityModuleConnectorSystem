@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections;
+using _Project.Scripts.Camera;
 using UnityEngine;
 
 namespace _Project.Scripts
@@ -22,18 +24,46 @@ namespace _Project.Scripts
 
         public void ChangeWeaponInHands(WeaponItem weaponItem, WeaponItem oldWeaponItem)
         {
+            if (weaponItem == null)
+            {
+                if (oldWeaponItem != null)
+                {
+                    oldWeaponItem.UsableItemEntity.gameObject.SetActive(false);
+                    AddWeaponToHolder(oldWeaponItem);   
+                }
+                return;
+            }
+            
             if (oldWeaponItem != null)
             {
                 oldWeaponItem.UsableItemEntity.gameObject.SetActive(false);
+                AddWeaponToHolder(oldWeaponItem);
+                Debug.Log(
+                    $"weaponItem: {weaponItem.UsableItemEntity.name}, oldWeaponItem: {oldWeaponItem.UsableItemEntity.name}");
             }
+
+            Debug.Log($"weaponItem: {weaponItem.UsableItemEntity.name}");
 
             var data = weaponItem.DataObject as WeaponDataObject;
 
+            WeaponHandsPositionData positionData = null;
+
+            if (m_AbstractEntity.GetType() == typeof(PlayerEntity))
+            {
+                positionData = data.GetPositionData<PlayerWeaponHandsPositionData>();
+                Utility.SetLayerRecursively(weaponItem.UsableItemEntity.gameObject, LayerMask.NameToLayer("Hands"));
+            }
+            else if (m_AbstractEntity.GetType() == typeof(NpcEntity))
+            {
+                positionData = data.GetPositionData<NpcWeaponHandsPositionData>();
+                Utility.SetLayerRecursively(weaponItem.UsableItemEntity.gameObject, LayerMask.NameToLayer("Entity"));
+            }
+
             var usableItemEntity = weaponItem.UsableItemEntity;
             usableItemEntity.transform.SetParent(m_WeaponHandsTransform);
-            usableItemEntity.transform.localPosition = data.NpcHandsPosition;
-            usableItemEntity.transform.localRotation = Quaternion.Euler(data.NpcHandsRotation);
-            usableItemEntity.transform.localScale = data.NpcHandsScale;
+            usableItemEntity.transform.localPosition = positionData.HandsPosition;
+            usableItemEntity.transform.localRotation = Quaternion.Euler(positionData.HandsRotation);
+            usableItemEntity.transform.localScale = positionData.HandsScale;
             usableItemEntity.gameObject.SetActive(true);
         }
     }

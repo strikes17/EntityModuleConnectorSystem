@@ -1,13 +1,13 @@
 ﻿using System;
-using _Project.Scripts.Camera;
+using UnityEngine;
 
 namespace _Project.Scripts
 {
     [Serializable]
-    public class NpcAiWeaponConnector : BehaviourModuleConnector
+    public class HandsWeaponAnimatorSwitcherConnector : BehaviourModuleConnector
     {
         [SelfInject] private InventoryModule m_InventoryModule;
-        [SelfInject] private NpcUsableItemHolderModule m_UsableItemHolderModule;
+        [SelfInject] private HandsAnimatorSwitcherModule m_AnimatorSwitcherModule;
         [SelfInject] private AnimatorStateMachineModule m_AnimatorStateMachineModule;
 
         private WeaponItem m_OldWeapon;
@@ -16,12 +16,6 @@ namespace _Project.Scripts
         protected override void Initialize()
         {
             m_InventoryModule.WeaponInHandsChanged += InventoryModuleOnWeaponInHandsChanged;
-            m_InventoryModule.WeaponAdded += InventoryModuleOnWeaponAdded;
-        }
-
-        private void InventoryModuleOnWeaponAdded(WeaponItem weaponItem)
-        {
-            m_UsableItemHolderModule.AddWeaponToHolder(weaponItem);
         }
 
         private void InventoryModuleOnWeaponInHandsChanged(WeaponItem newWeapon, WeaponItem oldWeapon)
@@ -29,12 +23,14 @@ namespace _Project.Scripts
             m_AnimatorStateMachineModule.StateFinished -= AnimatorStateMachineModuleOnStateFinished;
             if (newWeapon != null && oldWeapon == null)
             {
-                m_UsableItemHolderModule.ChangeWeaponInHands(newWeapon, oldWeapon);
+                m_AnimatorSwitcherModule.ShowHands();
+                m_AnimatorSwitcherModule.SetAnimatorForWeapon(newWeapon);
             }
             else
             {
                 m_OldWeapon = oldWeapon;
                 m_NewWeapon = newWeapon;
+                m_AnimatorSwitcherModule.ShowHands();
                 m_AnimatorStateMachineModule.StateFinished += AnimatorStateMachineModuleOnStateFinished;
             }
         }
@@ -42,7 +38,7 @@ namespace _Project.Scripts
         private void AnimatorStateMachineModuleOnStateFinished(string stateName)
         {
             m_AnimatorStateMachineModule.StateFinished -= AnimatorStateMachineModuleOnStateFinished;
-            m_UsableItemHolderModule.ChangeWeaponInHands(m_NewWeapon, m_OldWeapon);
+            m_AnimatorSwitcherModule.SetAnimatorForWeapon(m_NewWeapon);
             m_NewWeapon = null;
             m_OldWeapon = null;
         }

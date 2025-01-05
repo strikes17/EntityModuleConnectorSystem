@@ -90,8 +90,8 @@ namespace _Project.Scripts
                 {
                     m_ActiveTaskResolver.StopResolveTask();
                 }
-                Debug.Log($"AiTask {aiTaskResolver.OnlineTaskType} priority is higher than {maxPriority}, setting" +
-                          $"{aLifeState.ToString()}");
+                // Debug.Log($"AiTask {aiTaskResolver.OnlineTaskType} priority is higher than {maxPriority}, setting" +
+                          // $"{aLifeState.ToString()}");
                 ActiveTaskResolver = aiTaskResolver;
                 m_ActiveTaskResolver.StartResolveTask();
             }

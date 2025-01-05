@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Sirenix.OdinInspector;
 using UnityEngine;
 
 namespace _Project.Scripts
@@ -21,11 +22,35 @@ namespace _Project.Scripts
 
         private List<AbstractUsableItem> m_UsableItems;
 
-        private WeaponItem m_PrimaryWeapon;
-        private WeaponItem m_SecondaryWeapon;
-        private WeaponItem m_PistolWeapon;
+        [SerializeReference, ReadOnly] private WeaponItem m_PrimaryWeapon;
+        [SerializeReference, ReadOnly] private WeaponItem m_SecondaryWeapon;
+        [SerializeReference, ReadOnly] private WeaponItem m_PistolWeapon;
 
-        private WeaponItem m_WeaponInHands;
+        [SerializeReference, ReadOnly] private WeaponItem m_WeaponInHands;
+
+        public void SetPrimaryWeaponInHands() => SetTargetWeaponInHands(m_PrimaryWeapon);
+
+        public void SetSecondaryWeaponInHands() => SetTargetWeaponInHands(m_SecondaryWeapon);
+
+        public void SetPistolWeaponInHands() => SetTargetWeaponInHands(m_PistolWeapon);
+
+        private void SetTargetWeaponInHands(WeaponItem weaponItem)
+        {
+            var oldWeapon = m_WeaponInHands;
+            if (weaponItem != null)
+            {
+                if (m_WeaponInHands == weaponItem)
+                {
+                    m_WeaponInHands = null;
+                }
+                else
+                {
+                    m_WeaponInHands = weaponItem;
+                }
+            }
+            WeaponInHandsChanged(m_WeaponInHands, oldWeapon);
+
+        }
 
         public void AddItem(AbstractUsableItem abstractUsableItem)
         {
@@ -34,25 +59,25 @@ namespace _Project.Scripts
             {
                 var weaponItem = (WeaponItem)abstractUsableItem;
                 var weaponDataObject = weaponItem.DataObject as WeaponDataObject;
-                if (m_PrimaryWeapon == null)
+                if (weaponDataObject != null)
                 {
-                    if (m_PrimaryWeapon != weaponItem)
+                    if (m_PrimaryWeapon == null && weaponDataObject.WeaponType == WeaponType.Rifle)
                     {
-                        m_PrimaryWeapon = weaponItem;
-                        PrimaryWeaponChanged(m_PrimaryWeapon);
+                        if (m_PrimaryWeapon != weaponItem)
+                        {
+                            m_PrimaryWeapon = weaponItem;
+                            PrimaryWeaponChanged(m_PrimaryWeapon);
+                        }
                     }
-                }
-                else if (m_SecondaryWeapon == null)
-                {
-                    if (m_SecondaryWeapon != weaponItem)
+                    else if (m_SecondaryWeapon == null && weaponDataObject.WeaponType == WeaponType.Rifle)
                     {
-                        m_SecondaryWeapon = weaponItem;
-                        SecondaryWeaponChanged(m_SecondaryWeapon);
+                        if (m_SecondaryWeapon != weaponItem)
+                        {
+                            m_SecondaryWeapon = weaponItem;
+                            SecondaryWeaponChanged(m_SecondaryWeapon);
+                        }
                     }
-                }
-                else if (m_PistolWeapon == null)
-                {
-                    if (weaponDataObject != null && weaponDataObject.WeaponType == WeaponType.Pistol)
+                    else if (m_PistolWeapon == null && weaponDataObject.WeaponType == WeaponType.Pistol)
                     {
                         if (m_PistolWeapon != weaponItem)
                         {
@@ -60,30 +85,30 @@ namespace _Project.Scripts
                             PistolWeaponChanged(m_PistolWeapon);
                         }
                     }
-                }
 
-                WeaponAdded(weaponItem);
+                    WeaponAdded(weaponItem);
 
-                if (m_WeaponInHands == null)
-                {
-                    if (m_PrimaryWeapon != null)
+                    if (m_WeaponInHands == null)
                     {
-                        m_WeaponInHands = m_PrimaryWeapon;
-                    }
-                    else if (m_SecondaryWeapon != null)
-                    {
-                        m_WeaponInHands = m_SecondaryWeapon;
-                    }
-                    else if (m_PistolWeapon != null)
-                    {
-                        m_PistolWeapon = m_PrimaryWeapon;
+                        if (m_PrimaryWeapon != null)
+                        {
+                            m_WeaponInHands = m_PrimaryWeapon;
+                        }
+                        else if (m_SecondaryWeapon != null)
+                        {
+                            m_WeaponInHands = m_SecondaryWeapon;
+                        }
+                        else if (m_PistolWeapon != null)
+                        {
+                            m_PistolWeapon = m_PrimaryWeapon;
+                        }
+
+                        WeaponInHandsChanged(m_WeaponInHands, null);
                     }
 
-                    WeaponInHandsChanged(m_WeaponInHands, null);
+                    // Debug.Log($"Added {abstractUsableItem.GetType()}");
                 }
             }
-
-            Debug.Log($"Added {abstractUsableItem.GetType()}");
         }
 
         public T TryGetItem<T>(string id) where T : AbstractUsableItem
