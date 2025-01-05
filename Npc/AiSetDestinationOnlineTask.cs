@@ -41,7 +41,7 @@ namespace _Project.Scripts
         protected virtual void AiNavMeshModuleOnReachedTargetPoint(AbstractEntity obj, Vector3 target)
         {
             TaskCompleted(this);
-            Debug.Log($"Completed task of destintion target point {target}");
+            // Debug.Log($"Completed task of destintion target point {target}");
         }
     }
 }

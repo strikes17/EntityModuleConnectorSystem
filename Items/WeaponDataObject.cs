@@ -1,3 +1,5 @@
+using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 namespace _Project.Scripts
@@ -7,21 +9,23 @@ namespace _Project.Scripts
     {
         [SerializeField] private WeaponType m_WeaponType;
         [SerializeField] private WeaponEntity m_WeaponEntity;
-        [SerializeField] private Vector3 m_NpcHandsPosition;
-        [SerializeField] private Vector3 m_NpcHandsRotation;
-        [SerializeField] private Vector3 m_NpcHandsScale;
+
         [SerializeField] private WeaponStatsData m_BaseStatsData;
 
+        [SerializeReference] private List<WeaponHandsPositionData> m_HandsPositionDatas;
+
         public WeaponStatsData BaseStatsData => m_BaseStatsData;
-
-        public Vector3 NpcHandsPosition => m_NpcHandsPosition;
-
-        public Vector3 NpcHandsRotation => m_NpcHandsRotation;
-
-        public Vector3 NpcHandsScale => m_NpcHandsScale;
+        
+        public T GetPositionData<T>() where T : WeaponHandsPositionData
+        {
+            var positionData = m_HandsPositionDatas.FirstOrDefault(x => x is T);
+            return positionData as T;
+        }
 
         public WeaponEntity WeaponEntity => m_WeaponEntity;
 
         public WeaponType WeaponType => m_WeaponType;
+        
+        
     }
 }

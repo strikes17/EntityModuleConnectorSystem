@@ -4,7 +4,19 @@
     {
         void OnUpdate();
 
+        int Order { get; }
+    }
+    
+    public interface ILateUpdateListener
+    {
         void OnLateUpdate();
+        
+        int Order { get; }
+    }
+    
+    public interface IFixedUpdateListener
+    {
+        void OnFixedUpdate();
         
         int Order { get; }
     }

@@ -37,7 +37,7 @@ namespace _Project.Scripts
             {
                 if (!m_TaskResolverModule.HasAnyTask)
                 {
-                    Debug.Log($"Polling ai action for npc {m_AbstractEntity.name}");
+                    // Debug.Log($"Polling ai action for npc {m_AbstractEntity.name}");
             
                     if (!m_TaskResolverModule.HasTaskOfType<AiSetDestinationOnlineTask>())
                     {
@@ -65,8 +65,8 @@ namespace _Project.Scripts
             AiTaskResolver setDestinationTaskResolver = new AiTaskResolver(setDestinationOfflineTask,
                 setDestinationOnlineTask, AiTaskPriority.Default);
 
-            Debug.Log(
-                $"Npc {m_AbstractEntity.name} decided to go with alife: {m_NpcALifeModule.NpcALifeState.ToString()}");
+            // Debug.Log(
+                // $"Npc {m_AbstractEntity.name} decided to go with alife: {m_NpcALifeModule.NpcALifeState.ToString()}");
             m_TaskResolverModule.AddTask(setDestinationTaskResolver, m_NpcALifeModule.NpcALifeState);
         }
     }

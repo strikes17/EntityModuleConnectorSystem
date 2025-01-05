@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using Redcode.Moroutines;
 using Sirenix.OdinInspector;
 using UnityEngine;
 
@@ -69,7 +70,7 @@ namespace _Project.Scripts
         {
             m_ChildEntities = transform.GetComponentsInChildren<AbstractEntity>(true).ToList();
             m_ChildEntities.Remove(this);
-            StartCoroutine(InitializeCoroutine());
+            Moroutine.Run(InitializeCoroutine());
         }
 
         private IEnumerator InitializeCoroutine()
@@ -85,7 +86,7 @@ namespace _Project.Scripts
                 else
                 {
                     connector.Resolved += ConnectorOnResolved;
-                    // Debug.LogError($"Connector: {connector.GetType()} of {name} is not resolved!");
+                    Debug.LogError($"Connector: {connector.GetType()} of {name} is not resolved!");
                 }
             });
         }

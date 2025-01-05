@@ -58,13 +58,13 @@ namespace _Project.Scripts
             m_NavMeshAgent.CalculatePath(target, m_NavMeshPath);
             if (m_NavMeshPath.status != NavMeshPathStatus.PathComplete)
             {
-                Debug.Log($"Path is invalid - {m_NavMeshPath.status}");
+                // Debug.Log($"Path is invalid - {m_NavMeshPath.status}");
                 return false;
             }
 
             if (Vector3.Distance(m_NavMeshAgent.transform.position, target) < 1f)
             {
-                Debug.Log($"Already at destination");
+                // Debug.Log($"Already at destination");
                 return false;
             }
 
@@ -190,7 +190,7 @@ namespace _Project.Scripts
                    Vector3.Distance(m_AbstractEntity.transform.position, target) > 1f)
             {
                 // m_NavMeshAgent.SetPath(m_NavMeshPath);
-                Debug.Log($"Moving to point :{target}");
+                // Debug.Log($"Moving to point :{target}");
                 yield return null;
             }
 

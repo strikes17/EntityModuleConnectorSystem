@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using UnityEngine;
 using Object = UnityEngine.Object;
 using Random = System.Random;
@@ -55,6 +56,36 @@ namespace _Project.Scripts
             primitive.transform.position = new Vector3(position.x, 0f, position.y);
             primitive.transform.localScale = new Vector3(0.75f, 0.75f, 0.75f);
             return primitive;
+        }
+
+        public static void SetLayerRecursively(GameObject gameObject, int layer)
+        {
+            if (gameObject == null) return;
+
+            gameObject.layer = layer; // Change the layer of this object
+            // Recursively call the method for each child
+            foreach (Transform child in gameObject.transform)
+            {
+                SetLayerRecursively(child.gameObject, layer);
+            }
+        }
+
+        public static bool IsOverridingVirtualMethod(Type derivedType, MethodInfo virtualMethod)
+        {
+            // Get method from derived type with the same name and signature as the virtual method
+            MethodInfo derivedMethod = derivedType.GetMethod(
+                virtualMethod.Name,
+                BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance,
+                null,
+                virtualMethod.GetParameters().Select(p => p.ParameterType).ToArray(),
+                null
+            );
+
+            if (derivedMethod == null) return false; // If the method is not present, then it is not overridden
+            if (derivedMethod.DeclaringType == virtualMethod.DeclaringType)
+                return false;
+
+            return true; // This method is not overriding base virtual method.
         }
     }
 }

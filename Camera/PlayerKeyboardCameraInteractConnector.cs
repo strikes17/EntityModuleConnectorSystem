@@ -5,16 +5,16 @@ namespace _Project.Scripts.Camera
     [Serializable]
     public class PlayerKeyboardCameraInteractConnector : BehaviourModuleConnector
     {
-        [SelfInject] private PlayerKeyboardInputModule m_PlayerKeyboardInputModule;
+        [SelfInject] private PlayerMouseKeyboardInputModule m_PlayerMouseKeyboardInputModule;
         [Inject] private CameraInteractModule m_CameraInteractModule;
 
         protected override void Initialize()
         {
-            m_PlayerKeyboardInputModule.PlayerEntityInteractionKeyPressed +=
-                PlayerKeyboardInputModuleOnPlayerEntityInteractionKeyPressed;
+            m_PlayerMouseKeyboardInputModule.PlayerEntityInteractionKeyPressed +=
+                PlayerMouseKeyboardInputModuleOnPlayerMouseEntityInteractionKeyPressed;
         }
 
-        private void PlayerKeyboardInputModuleOnPlayerEntityInteractionKeyPressed()
+        private void PlayerMouseKeyboardInputModuleOnPlayerMouseEntityInteractionKeyPressed()
         {
             m_CameraInteractModule.CameraForwardRaycast(false);
         }

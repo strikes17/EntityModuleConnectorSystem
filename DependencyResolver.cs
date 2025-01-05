@@ -47,12 +47,17 @@ namespace _Project.Scripts
                 if (containerModule != null)
                 {
                     m_EntityContainerModules.Add(containerModule);
+                    Debug.Log($"Added {containerModule.GetType()}");
                 }
 
                 var entityContainerModule = abstractEntity.GetBehaviorModuleByType<EntityContainerModule>();
                 if (entityContainerModule != null)
                 {
-                    m_EntityContainerModules.Add(entityContainerModule);
+                    if (!m_EntityContainerModules.Contains(entityContainerModule))
+                    {
+                        m_EntityContainerModules.Add(entityContainerModule);
+                        Debug.Log($"Added 2 {entityContainerModule.GetType()}");
+                    }
                 }
 
                 var entityConnectors = abstractEntity.Connectors;

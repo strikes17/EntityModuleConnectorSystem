@@ -46,12 +46,12 @@ namespace _Project.Scripts
             if (isSuccess)
             {
                 TaskCompleted(this);
-                Debug.Log("Completed task of entity interact");
+                // Debug.Log("Completed task of entity interact");
             }
             else
             {
                 TaskFailed(this);
-                Debug.Log("Failed task of entity interact");
+                // Debug.Log("Failed task of entity interact");
             }
         }
     }

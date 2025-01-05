@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections;
+using System.Reflection;
 using Redcode.Moroutines;
 using Sirenix.OdinInspector;
 #if UNITY_EDITOR
@@ -10,7 +11,8 @@ using UnityEngine;
 namespace _Project.Scripts
 {
     [Serializable]
-    public abstract class AbstractBehaviourModule : IUpdateListener, IRegisterUpdateListener
+    public abstract class AbstractBehaviourModule : IUpdateListener, IRegisterUpdateListener, IFixedUpdateListener,
+        ILateUpdateListener
     {
 #if UNITY_EDITOR
         [Button("Copy type")]
@@ -25,11 +27,15 @@ namespace _Project.Scripts
         public virtual void OnUpdate()
         {
         }
-        
+
         public virtual void OnLateUpdate()
         {
         }
-        
+
+        public virtual void OnFixedUpdate()
+        {
+        }
+
         public virtual int Order => 0;
 
         public virtual void Initialize(AbstractEntity abstractEntity)
@@ -60,7 +66,26 @@ namespace _Project.Scripts
 
         public void Register(GameUpdateHandler gameUpdateHandler)
         {
-            gameUpdateHandler.AddListener(this);
+            MethodInfo virtualMethod =
+                typeof(AbstractBehaviourModule).GetMethod("OnUpdate", BindingFlags.Public | BindingFlags.Instance);
+            if (Utility.IsOverridingVirtualMethod(GetType(), virtualMethod))
+            {
+                gameUpdateHandler.AddUpdateListener(this);
+            }
+
+            virtualMethod =
+                typeof(AbstractBehaviourModule).GetMethod("OnLateUpdate", BindingFlags.Public | BindingFlags.Instance);
+            if (Utility.IsOverridingVirtualMethod(GetType(), virtualMethod))
+            {
+                gameUpdateHandler.AddLateUpdateListener(this);
+            }
+
+            virtualMethod =
+                typeof(AbstractBehaviourModule).GetMethod("OnFixedUpdate", BindingFlags.Public | BindingFlags.Instance);
+            if (Utility.IsOverridingVirtualMethod(GetType(), virtualMethod))
+            {
+                gameUpdateHandler.AddFixedUpdateListener(this);
+            }
         }
 
         public void Unregister(GameUpdateHandler gameUpdateHandler)
