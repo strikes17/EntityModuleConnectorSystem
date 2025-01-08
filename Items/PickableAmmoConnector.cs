@@ -30,8 +30,8 @@ namespace _Project.Scripts
                 }
                 else
                 {
-                    AmmoItem ammoItem = new AmmoItem(m_AmmoDataObject);
-                    inventoryModule.AddItem(ammoItem);
+                    // AmmoItem ammoItem = new AmmoItem(m_AmmoDataObject, new WeaponEntity(), new GuiInventoryItemEntity());
+                    // inventoryModule.AddItem(ammoItem);
                 }
             }
         }

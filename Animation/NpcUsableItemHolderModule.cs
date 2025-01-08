@@ -26,6 +26,7 @@ namespace _Project.Scripts
         {
             if (weaponItem == null)
             {
+                Debug.Log("WEAPON IS NULL!");
                 if (oldWeaponItem != null)
                 {
                     oldWeaponItem.UsableItemEntity.gameObject.SetActive(false);

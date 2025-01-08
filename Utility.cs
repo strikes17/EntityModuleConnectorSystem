@@ -70,6 +70,19 @@ namespace _Project.Scripts
             }
         }
 
+        // public static bool IsInstanceOverridingVirtualMethod<T>(Type derivedType, T instance, string methodName)
+        // {
+        //     MethodInfo virtualMethod =
+        //         typeof(GuiAbstractBehaviourModule).GetMethod(methodName,
+        //             BindingFlags.Public | BindingFlags.Instance);
+        //     if (IsOverridingVirtualMethod(instance.GetType(), virtualMethod))
+        //     {
+        //         return true;
+        //     }
+        //
+        //     return false;
+        // }
+
         public static bool IsOverridingVirtualMethod(Type derivedType, MethodInfo virtualMethod)
         {
             // Get method from derived type with the same name and signature as the virtual method

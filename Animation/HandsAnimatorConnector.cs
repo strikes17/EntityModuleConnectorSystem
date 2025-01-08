@@ -32,14 +32,7 @@ namespace _Project.Scripts
             {
                 var oldWeaponModule = oldWeapon.UsableItemEntity.GetBehaviorModuleByType<WeaponModule>();
                 oldWeaponModule.WeaponFired -= WeaponModuleOnWeaponFired;
-                if (nextWeapon != null)
-                {
-                    m_AnimatorStateMachineModule.SetAnimationState("ChangeWeapon", true);
-                }
-                else
-                {
-                    m_AnimatorStateMachineModule.SetAnimationState("Holster", true);
-                }
+                m_AnimatorStateMachineModule.TriggerAnimationState("Holster", true);
             }
 
             if (nextWeapon != null)
@@ -50,18 +43,18 @@ namespace _Project.Scripts
                 m_StatesModule.SetState<HandsStandState>();
                 if (oldWeapon == null)
                 {
-                    m_AnimatorStateMachineModule.SetAnimationState("Draw");
+                    m_AnimatorStateMachineModule.TriggerAnimationState("Draw");
                 }
             }
             else
             {
-                m_AnimatorStateMachineModule.SetAnimationState("Holster", true);
+                m_AnimatorStateMachineModule.TriggerAnimationState("Holster", true);
             }
         }
 
         private void WeaponModuleOnWeaponFired(AbstractEntity obj)
         {
-            m_AnimatorStateMachineModule.SetAnimationState("Fired");
+            m_AnimatorStateMachineModule.SetAnimationStateForced("Fired");
         }
     }
 }

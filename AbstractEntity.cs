@@ -31,7 +31,7 @@ namespace _Project.Scripts
 
         public IEnumerable<BehaviourModuleConnector> Connectors => m_Connectors;
 
-        private void OnValidate()
+        protected virtual void OnValidate()
         {
             gameObject.layer = LayerMask.NameToLayer("Entity");
         }

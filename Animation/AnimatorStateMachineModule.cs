@@ -13,26 +13,26 @@ namespace _Project.Scripts
         [SerializeField] private Animator m_Animator;
 
         private bool m_StateTriggered;
-        private string m_StateName;
-        private float m_Time;
+        private string m_EventStateName;
 
         private Moroutine m_Moroutine;
 
-        public void SetAnimationState(string stateName, bool shouldHandleEvents = false)
+        public void SetAnimationStateForced(string stateName)
         {
-            Debug.Log($"Set state {stateName}");
-            
+            m_Animator.Play(stateName);
+        }
+
+        public void TriggerAnimationState(string stateName, bool shouldHandleEvents = false)
+        {
             m_Animator.SetTrigger(stateName);
 
             if (shouldHandleEvents)
             {
-                m_StateName = stateName;
+                m_EventStateName = stateName;
                 if (m_Moroutine != null)
                 {
                     m_Moroutine.Stop();
                 }
-
-                m_Time = 0f;
                 m_StateTriggered = false;
                 m_Moroutine = Moroutine.Run(Test());
             }
@@ -40,12 +40,7 @@ namespace _Project.Scripts
 
         private IEnumerator Test()
         {
-            yield return new WaitWhile(() =>
-            {
-                var length = m_Animator.GetCurrentAnimatorClipInfo(1).Length;
-                Debug.Log($"length: {length}");
-                return length == 0;
-            });
+            yield return new WaitWhile(() => !m_Animator.GetCurrentAnimatorStateInfo(1).IsName(m_EventStateName));
             m_StateTriggered = true;
         }
 
@@ -53,16 +48,15 @@ namespace _Project.Scripts
         {
             if (m_StateTriggered)
             {
-                var length = m_Animator.GetCurrentAnimatorClipInfo(1)[0].clip.length;
-                m_Time += Time.deltaTime;
-                Debug.Log($"m_Time: {m_Time} / {length}");
-                if (m_Time >= length)
+                var animatorStateInfo = m_Animator.GetCurrentAnimatorStateInfo(1);
+                var normalizedTime = animatorStateInfo.normalizedTime;
+                // Debug.Log($"normalizedTime: {normalizedTime} / {1f}");
+                if (normalizedTime >= 1f)
                 {
                     m_StateTriggered = false;
-                    m_Time = 0f;
-                    StateFinished(m_StateName);
-                    Debug.Log($"Finished state: {m_StateName}");
-                }
+                    StateFinished(m_EventStateName);
+                    Debug.Log($"Finished state: {m_EventStateName}");
+                }   
             }
         }
     }

@@ -1,5 +1,6 @@
 ﻿using System;
 using _Project.Scripts.Camera;
+using UnityEngine;
 
 namespace _Project.Scripts
 {
