@@ -2,7 +2,9 @@ namespace _Project.Scripts
 {
     public class AmmoItem : AbstractUsableItem
     {
-        public AmmoItem(AbstractPickableItemDataObject itemDataObject) : base(itemDataObject)
+        //Тут будет AmmoEntity
+        public AmmoItem(AbstractPickableItemDataObject itemDataObject, WeaponEntity weaponEntity,
+            GuiInventoryItemEntity inventoryItemEntity) : base(itemDataObject, weaponEntity, inventoryItemEntity)
         {
         }
 

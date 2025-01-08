@@ -8,10 +8,10 @@ namespace _Project.Scripts
     public class WeaponItem : AbstractUsableItem
     {
         [SerializeField, ReadOnly] private string m_Name;
-        
-        public WeaponItem(AbstractPickableItemDataObject itemDataObject, WeaponEntity weaponEntity) : base(itemDataObject)
+
+        public WeaponItem(AbstractPickableItemDataObject itemDataObject, WeaponEntity weaponEntity,
+            GuiInventoryItemEntity inventoryItemEntity) : base(itemDataObject, weaponEntity, inventoryItemEntity)
         {
-            m_UsableItemEntity = weaponEntity;
             m_Name = weaponEntity.name;
         }
     }

@@ -15,7 +15,7 @@ namespace _Project.Scripts
 
         private void WeaponModuleOnWeaponFired(AbstractEntity obj)
         {
-            m_AnimatorStateMachineModule.SetAnimationState("Fired");
+            m_AnimatorStateMachineModule.TriggerAnimationState("Fired");
         }
     }
 }

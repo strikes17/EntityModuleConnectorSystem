@@ -9,6 +9,14 @@ namespace _Project.Scripts
     [Serializable]
     public class InventoryModule : AbstractBehaviourModule
     {
+        public event Action<AbstractPickableItemDataObject> AddItemValidationStarted = delegate { };
+
+        public event Action<AbstractPickableItemDataObject> AddItemValidationCompleted = delegate { };
+
+        public event Action<AbstractPickableItemDataObject> AddItemValidationFailed = delegate { };
+
+        public event Action<AbstractUsableItem> ItemAdded = delegate(AbstractUsableItem item) { };
+
         public event Action<WeaponItem> WeaponAdded = delegate(WeaponItem item) { };
 
         public event Action<WeaponItem, WeaponItem> WeaponInHandsChanged =
@@ -20,7 +28,11 @@ namespace _Project.Scripts
 
         public WeaponItem WeaponInHands => m_WeaponInHands;
 
+        public bool IsFull;
+
         private List<AbstractUsableItem> m_UsableItems;
+
+        public IEnumerable<AbstractUsableItem> AllItems => m_UsableItems;
 
         [SerializeReference, ReadOnly] private WeaponItem m_PrimaryWeapon;
         [SerializeReference, ReadOnly] private WeaponItem m_SecondaryWeapon;
@@ -37,19 +49,42 @@ namespace _Project.Scripts
         private void SetTargetWeaponInHands(WeaponItem weaponItem)
         {
             var oldWeapon = m_WeaponInHands;
-            if (weaponItem != null)
-            {
-                if (m_WeaponInHands == weaponItem)
-                {
-                    m_WeaponInHands = null;
-                }
-                else
-                {
-                    m_WeaponInHands = weaponItem;
-                }
-            }
-            WeaponInHandsChanged(m_WeaponInHands, oldWeapon);
 
+            if (m_WeaponInHands == weaponItem)
+            {
+                m_WeaponInHands = null;
+            }
+            else
+            {
+                m_WeaponInHands = weaponItem;
+            }
+
+            if (m_WeaponInHands != null && oldWeapon != null)
+            {
+                Debug.Log(
+                    $"m_WeaponInHands: {m_WeaponInHands.UsableItemEntity.name}, oldWeapon: {oldWeapon.UsableItemEntity.name}");
+            }
+            else if (oldWeapon != null)
+            {
+                Debug.Log($"m_WeaponInHands: EMPTY_HAND, oldWeapon: {oldWeapon.UsableItemEntity.name}");
+            }
+
+            WeaponInHandsChanged(m_WeaponInHands, oldWeapon);
+        }
+
+        public bool CanAddItem(AbstractPickableItemDataObject itemDataObject)
+        {
+            AddItemValidationStarted(itemDataObject);
+
+            if (IsFull)
+            {
+                AddItemValidationFailed(itemDataObject);
+                return false;
+            }
+
+            AddItemValidationCompleted(itemDataObject);
+
+            return true;
         }
 
         public void AddItem(AbstractUsableItem abstractUsableItem)
@@ -100,7 +135,7 @@ namespace _Project.Scripts
                         }
                         else if (m_PistolWeapon != null)
                         {
-                            m_PistolWeapon = m_PrimaryWeapon;
+                            m_WeaponInHands = m_PistolWeapon;
                         }
 
                         WeaponInHandsChanged(m_WeaponInHands, null);
@@ -108,6 +143,10 @@ namespace _Project.Scripts
 
                     // Debug.Log($"Added {abstractUsableItem.GetType()}");
                 }
+            }
+            else
+            {
+                ItemAdded(abstractUsableItem);
             }
         }
 

@@ -20,7 +20,7 @@ namespace _Project.Scripts
         private void StatesModuleOnStateChanged(AbstractState state)
         {
             // Debug.Log($"On state changed to {state.GetType()} {Time.deltaTime}");
-            m_AnimatorStateMachineModule.SetAnimationState(m_AnimationDataObject.GetAnimationStateName(state.GetType()));
+            m_AnimatorStateMachineModule.TriggerAnimationState(m_AnimationDataObject.GetAnimationStateName(state.GetType()));
         }
     }
 }
