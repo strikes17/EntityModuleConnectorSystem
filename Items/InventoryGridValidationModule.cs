@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 namespace _Project.Scripts
@@ -11,6 +12,8 @@ namespace _Project.Scripts
         public event Action<Vector2Int> GridCellUnlocked = delegate { };
 
         private Dictionary<Vector2Int, AbstractUsableItem> m_Grid;
+
+        public List<(Vector2Int, AbstractUsableItem)> AllItems => m_Grid.Select(x => (x.Key, x.Value)).ToList();
 
         public int UnlockedCellsCount
         {
@@ -37,13 +40,35 @@ namespace _Project.Scripts
                         GridCellUnlocked(vector2Int);
                     }
 
-                    
+
                     m_UnlockedCellsCount = value;
                 }
             }
         }
 
         private int m_UnlockedCellsCount;
+
+        public Vector2Int GetCellPositionByIndex(int i)
+        {
+            int x1 = m_UnlockedCellsCount % 9;
+            int y1 = m_UnlockedCellsCount / 9;
+
+            int x = i % 9;
+            int y = i / 9;
+
+            if (y < y1)
+            {
+                var lastCellPosition = new Vector2Int(x, y);
+                return lastCellPosition;
+            }
+
+            if (y != y1) return new Vector2Int(-1, -1);
+            {
+                if (x > x1) return new Vector2Int(-1, -1);
+                var lastCellPosition = new Vector2Int(x, y);
+                return lastCellPosition;
+            }
+        }
 
         public override void Initialize(AbstractEntity abstractEntity)
         {
@@ -72,7 +97,7 @@ namespace _Project.Scripts
             {
                 return cantAddItemPosition;
             }
-            
+
 
             for (int i = 0; i < yMax; i++)
             {
@@ -85,7 +110,7 @@ namespace _Project.Scripts
                 {
                     xMax = 9;
                 }
-                
+
                 for (int j = 0; j < xMax; j++)
                 {
                     m_Grid.TryGetValue(new Vector2Int(j, i), out AbstractUsableItem item);
@@ -94,7 +119,7 @@ namespace _Project.Scripts
                     {
                         continue;
                     }
-                    
+
                     if (size.x == 1 && size.y == 1)
                     {
                         return new Vector2Int(j, i);
@@ -113,7 +138,7 @@ namespace _Project.Scripts
                         {
                             m_Grid.TryGetValue(new Vector2Int(j + x, i + y), out item);
                             isFree = item == null;
-                            Debug.Log($"At cell: {j+x},{i+y} is free: {isFree}");
+                            Debug.Log($"At cell: {j + x},{i + y} is free: {isFree}");
                             if (!isFree)
                             {
                                 isOccupied = true;
@@ -148,6 +173,7 @@ namespace _Project.Scripts
                     m_Grid[position] = abstractUsableItem;
                 }
             }
+
             ItemPlacedInGrid(gridPosition, abstractUsableItem);
         }
     }

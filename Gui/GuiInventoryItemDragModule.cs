@@ -23,9 +23,32 @@ namespace _Project.Scripts
     [Serializable]
     public class GuiInventoryItemDragConnector : BehaviourModuleConnector
     {
-        [Inject] private GuiContainerModule m_GuiContainerModule;
-        [SelfInject] private GuiInventoryItemDragModule m_InventoryItemDragModule;
         [Inject(typeof(GuiPdaEntity))] private GuiAbstractVisibilityModule m_GuiPdaVisibilityModule;
+        [Inject(typeof(GuiStashScreenEntity))] private GuiAbstractVisibilityModule m_GuiStashScreenVisibilityModule;
+
+        [Inject(typeof(GuiTraderScreenEntity))]
+        private GuiAbstractVisibilityModule m_GuiTraderScreenVisibilityModule;
+
+        [Inject(typeof(GuiInventoryMainGridFillEntity))]
+        private GuiInventoryGridFillModule m_MainInventoryGridFillModule;
+
+        [Inject(typeof(GuiInventoryStashGridFillEntity))]
+        private GuiInventoryGridFillModule m_GuiStashGridFillModule;
+
+        [Inject(typeof(GuiTraderAssortmentGridFillEntity))]
+        private GuiInventoryGridFillModule m_GuiTraderAssortmentGridFillModule;
+
+        [Inject(typeof(GuiTraderBuyGridFillEntity))]
+        private GuiInventoryGridFillModule m_GuiTraderBuyGridFillModule;
+
+        [Inject(typeof(GuiTraderSellGridFillEntity))]
+        private GuiInventoryGridFillModule m_GuiTraderSellGridFillModule;
+
+        [Inject(typeof(GuiTraderPlayerInventoryGridFillEntity))]
+        private GuiInventoryGridFillModule m_GuiTraderPlayerInventoryGridFillModule;
+
+        [SelfInject] private GuiInventoryItemDragModule m_InventoryItemDragModule;
+        [SelfInject] private InventoryItemGridAssignModule m_GridAssignModule;
 
         private List<GuiInventoryGridFillModule> m_GridFillModules;
 
@@ -34,32 +57,37 @@ namespace _Project.Scripts
             m_GridFillModules = new();
 
             m_GuiPdaVisibilityModule.Shown += GuiPdaVisibilityModuleOnShown;
-            m_GuiContainerModule.ElementAdded += GuiContainerModuleOnElementAdded;
+            m_GuiStashScreenVisibilityModule.Shown += GuiStashScreenVisibilityModuleOnShown;
+            m_GuiTraderScreenVisibilityModule.Shown += GuiTraderScreenVisibilityModuleOnShown;
+        }
 
-            List<AbstractEntity> guiEntities = m_GuiContainerModule.ContainerCollection.ToList();
-            foreach (var abstractEntity in guiEntities)
-            {
-                GuiContainerModuleOnElementAdded(abstractEntity);
-            }
+        private void GuiTraderScreenVisibilityModuleOnShown()
+        {
+            m_GridFillModules.Clear();
+
+            m_GridFillModules.Add(m_GuiTraderAssortmentGridFillModule);
+            m_GridFillModules.Add(m_GuiTraderBuyGridFillModule);
+            m_GridFillModules.Add(m_GuiTraderSellGridFillModule);
+            m_GridFillModules.Add(m_GuiTraderPlayerInventoryGridFillModule);
+
+            m_InventoryItemDragModule.Setup(m_GridFillModules);
+        }
+
+        private void GuiStashScreenVisibilityModuleOnShown()
+        {
+            m_GridFillModules.Clear();
+
+            m_GridFillModules.Add(m_MainInventoryGridFillModule);
+            m_GridFillModules.Add(m_GuiStashGridFillModule);
+            m_InventoryItemDragModule.Setup(m_GridFillModules);
         }
 
         private void GuiPdaVisibilityModuleOnShown()
         {
-            
-            m_InventoryItemDragModule.Setup(m_GridFillModules);
-        }
+            m_GridFillModules.Clear();
 
-        private void GuiContainerModuleOnElementAdded(AbstractEntity abstractEntity)
-        {
-            var guiEntity = abstractEntity as GuiDefaultEntity;
-            if (guiEntity != null)
-            {
-                var gridFillModule = guiEntity.GetBehaviorModuleByType<GuiInventoryGridFillModule>();
-                if (gridFillModule != null)
-                {
-                    m_GridFillModules.Add(gridFillModule);
-                }
-            }
+            m_GridFillModules.Add(m_MainInventoryGridFillModule);
+            m_InventoryItemDragModule.Setup(m_GridFillModules);
         }
     }
 }
