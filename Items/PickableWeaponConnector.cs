@@ -33,16 +33,28 @@ namespace _Project.Scripts
                     if (canAddItem)
                     {
                         entity.gameObject.SetActive(false);
-
+                        WeaponItem weaponItem = null;
                         var weaponEntity = m_WeaponsContainer.SpawnWeapon(m_WeaponDataObject);
 
-                        var inventoryItemEntity =
-                            m_GuiContainerModule.SpawnGuiEntity(m_WeaponDataObject.InventoryItemEntity) as
-                                GuiInventoryItemEntity;
+                        if (user is PlayerEntity)
+                        {
+                            var inventoryItemEntity =
+                                m_GuiContainerModule.SpawnGuiEntity(m_WeaponDataObject.InventoryItemEntity) as
+                                    GuiInventoryItemEntity;
+                            var assignModule =
+                                inventoryItemEntity.GetBehaviorModuleByType<InventoryItemGridAssignModule>();
+                            inventoryItemEntity.gameObject.SetActive(false);
+                            weaponItem = new WeaponItem(m_WeaponDataObject, weaponEntity, inventoryItemEntity, m_HandlerRegisterModule);
+                            assignModule.AssignNewGrid(GridFillInventoryType.PlayerMain);
+                            assignModule.AssignNewGrid(GridFillInventoryType.NpcSell);
+                            assignModule.AssignNewGrid(GridFillInventoryType.TraderSell);
+                            assignModule.AssignNewGrid(GridFillInventoryType.PlayerStash);
+                        }
+                        else
+                        {
+                            weaponItem = new WeaponItem(m_WeaponDataObject, weaponEntity, null, m_HandlerRegisterModule);
+                        }
 
-                        inventoryItemEntity.gameObject.SetActive(false);
-
-                        WeaponItem weaponItem = new WeaponItem(m_WeaponDataObject, weaponEntity, inventoryItemEntity);
 
                         inventoryModule.AddItem(weaponItem);
 

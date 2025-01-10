@@ -5,6 +5,10 @@ using Object = UnityEngine.Object;
 
 namespace _Project.Scripts
 {
+    public enum GridFillInventoryType
+    {
+        PlayerMain = 0, PlayerStash = 1, NpcCorpse, TraderBuy, TraderSell, NpcBuy, NpcSell, TraderAssortment
+    }
     [Serializable]
     public class GuiInventoryGridFillModule : GuiAbstractBehaviourModule
     {
@@ -36,6 +40,19 @@ namespace _Project.Scripts
                 rectTransform.anchoredPosition = vector2;
                 rectTransform.localScale = Vector3.one;
             }
+        }
+
+        public void Clear()
+        {
+            var keys = m_GridCellsInstances.Keys;
+            foreach (var position in keys)
+            {
+                if (m_GridCellsInstances.TryGetValue(position, out Transform transform))
+                {
+                    GameObject.Destroy(transform.gameObject);
+                }
+            }
+            m_GridCellsInstances.Clear();
         }
 
         public void AddCell(Vector2Int position)

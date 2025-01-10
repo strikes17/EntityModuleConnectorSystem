@@ -6,11 +6,12 @@ namespace _Project.Scripts
     public abstract class AbstractUsableItem
     {
         public AbstractUsableItem(AbstractPickableItemDataObject itemDataObject, UsableItemEntity usableItemEntity,
-            GuiInventoryItemEntity inventoryItemEntity)
+            GuiInventoryItemEntity inventoryItemEntity, EntityGameUpdateHandlerRegisterModule handlerRegisterModule)
         {
             m_UsableItemEntity = usableItemEntity;
             m_ItemDataObject = itemDataObject;
             m_InventoryItemEntity = inventoryItemEntity;
+            m_HandlerRegisterModule = handlerRegisterModule;
         }
 
         public int Amount => m_Amount;
@@ -19,7 +20,19 @@ namespace _Project.Scripts
 
         public AbstractPickableItemDataObject DataObject => m_ItemDataObject;
 
-        public GuiInventoryItemEntity InventoryItemEntity => m_InventoryItemEntity;
+        public GuiInventoryItemEntity InventoryItemEntity
+        {
+            get
+            {
+                if (m_InventoryItemEntity == null)
+                {
+                    m_InventoryItemEntity = UnityEngine.Object.Instantiate(m_ItemDataObject.InventoryItemEntity);
+                    m_HandlerRegisterModule.Register(m_InventoryItemEntity);
+                }
+
+                return m_InventoryItemEntity;
+            }
+        }
 
         protected UsableItemEntity m_UsableItemEntity;
 
@@ -28,5 +41,7 @@ namespace _Project.Scripts
         protected AbstractPickableItemDataObject m_ItemDataObject;
 
         protected int m_Amount;
+
+        protected EntityGameUpdateHandlerRegisterModule m_HandlerRegisterModule;
     }
 }

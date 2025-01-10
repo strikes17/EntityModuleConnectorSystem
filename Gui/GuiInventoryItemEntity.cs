@@ -8,8 +8,4 @@ namespace _Project.Scripts
 
         public Vector2Int SizeInGrid => m_SizeInGrid;
     }
-    
-    public class GuiInventoryMainGridFillEntity : GuiDefaultEntity
-    {
-    }
 }
