@@ -17,7 +17,7 @@ namespace _Project.Scripts
 
         public IEnumerable<T> GetActiveElements()
         {
-            return m_Elements.Where(x => x.IsAvailable);
+            return m_Elements.Where(x => !x.IsAvailable);
         }
         
         public void DisableAll()

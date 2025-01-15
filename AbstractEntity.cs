@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using Redcode.Moroutines;
 using Sirenix.OdinInspector;
 using UnityEngine;
 
@@ -29,6 +30,11 @@ namespace _Project.Scripts
             ValueModuleAdded(abstractValueModule);
 
         public IEnumerable<BehaviourModuleConnector> Connectors => m_Connectors;
+
+        protected virtual void OnValidate()
+        {
+            gameObject.layer = LayerMask.NameToLayer("Entity");
+        }
 
         public List<T> GetBehaviorModulesCollectionByType<T>() where T : AbstractBehaviourModule
         {
@@ -64,7 +70,7 @@ namespace _Project.Scripts
         {
             m_ChildEntities = transform.GetComponentsInChildren<AbstractEntity>(true).ToList();
             m_ChildEntities.Remove(this);
-            StartCoroutine(InitializeCoroutine());
+            Moroutine.Run(InitializeCoroutine());
         }
 
         private IEnumerator InitializeCoroutine()
@@ -80,7 +86,7 @@ namespace _Project.Scripts
                 else
                 {
                     connector.Resolved += ConnectorOnResolved;
-                    // Debug.LogError($"Connector: {connector.GetType()} of {name} is not resolved!");
+                    Debug.LogError($"Connector: {connector.GetType()} of {name} is not resolved!");
                 }
             });
         }
