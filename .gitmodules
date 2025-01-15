@@ -1,3 +1,0 @@
-[submodule "odin"]
-	path = odin
-	url = ssh://git@git.odtrtadl.com:8024/GameDev/editor-tools.git
