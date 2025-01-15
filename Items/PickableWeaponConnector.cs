@@ -41,10 +41,15 @@ namespace _Project.Scripts
                             var inventoryItemEntity =
                                 m_GuiContainerModule.SpawnGuiEntity(m_WeaponDataObject.InventoryItemEntity) as
                                     GuiInventoryItemEntity;
-                            var assignModule =
-                                inventoryItemEntity.GetBehaviorModuleByType<InventoryItemGridAssignModule>();
                             inventoryItemEntity.gameObject.SetActive(false);
                             weaponItem = new WeaponItem(m_WeaponDataObject, weaponEntity, inventoryItemEntity, m_HandlerRegisterModule);
+
+                            var itemModule = inventoryItemEntity.GetBehaviorModuleByType<GuiInventoryItemModule>();
+                            itemModule.OwnerEntity = user;
+
+                            //hz
+                            var assignModule =
+                                inventoryItemEntity.GetBehaviorModuleByType<InventoryItemGridAssignModule>();
                             assignModule.AssignNewGrid(GridFillInventoryType.PlayerMain);
                             assignModule.AssignNewGrid(GridFillInventoryType.NpcSell);
                             assignModule.AssignNewGrid(GridFillInventoryType.TraderSell);
@@ -54,6 +59,7 @@ namespace _Project.Scripts
                         {
                             weaponItem = new WeaponItem(m_WeaponDataObject, weaponEntity, null, m_HandlerRegisterModule);
                         }
+
 
 
                         inventoryModule.AddItem(weaponItem);

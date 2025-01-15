@@ -87,7 +87,7 @@ namespace _Project.Scripts
         {
             var cantAddItemPosition = new Vector2Int(-1, -1);
             var inventoryItemEntity = dataObject.InventoryItemEntity;
-            var size = inventoryItemEntity.SizeInGrid;
+            var size = inventoryItemEntity.GetBehaviorModuleByType<GuiInventoryItemModule>().SizeInGrid;
             int yMax = m_UnlockedCellsCount / 9 + 1;
 
             bool canFit = size.x + size.y <= m_UnlockedCellsCount;
@@ -164,7 +164,7 @@ namespace _Project.Scripts
 
         public void PlaceItemInGrid(AbstractUsableItem abstractUsableItem, Vector2Int gridPosition)
         {
-            var size = abstractUsableItem.InventoryItemEntity.SizeInGrid;
+            var size = abstractUsableItem.InventoryItemEntity.GetBehaviorModuleByType<GuiInventoryItemModule>().SizeInGrid;
             for (int i = 0; i < size.y; i++)
             {
                 for (int j = 0; j < size.x; j++)

@@ -5,10 +5,6 @@ using Object = UnityEngine.Object;
 
 namespace _Project.Scripts
 {
-    public enum GridFillInventoryType
-    {
-        PlayerMain = 0, PlayerStash = 1, NpcCorpse, TraderBuy, TraderSell, NpcBuy, NpcSell, TraderAssortment
-    }
     [Serializable]
     public class GuiInventoryGridFillModule : GuiAbstractBehaviourModule
     {
@@ -18,6 +14,15 @@ namespace _Project.Scripts
         [SerializeField] private GameObject m_CellIndexerPrefab;
 
         private Dictionary<Vector2Int, Transform> m_GridCellsInstances;
+
+        public AbstractEntity OwnerEntity => m_OwnerEntity;
+
+        private AbstractEntity m_OwnerEntity;
+
+        public void SetOwner(AbstractEntity ownerEntity)
+        {
+            m_OwnerEntity = ownerEntity;
+        }
 
         public override void Initialize(AbstractEntity abstractEntity)
         {

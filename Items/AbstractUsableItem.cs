@@ -27,6 +27,7 @@ namespace _Project.Scripts
                 if (m_InventoryItemEntity == null)
                 {
                     m_InventoryItemEntity = UnityEngine.Object.Instantiate(m_ItemDataObject.InventoryItemEntity);
+                    m_InventoryItemEntity.GetBehaviorModuleByType<GuiInventoryItemModule>().Item = this;
                     m_HandlerRegisterModule.Register(m_InventoryItemEntity);
                 }
 

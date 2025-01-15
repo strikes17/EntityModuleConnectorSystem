@@ -6,21 +6,6 @@ using UnityEngine.EventSystems;
 namespace _Project.Scripts
 {
     [Serializable]
-    public class GuiInventoryItemDragModule : GuiAbstractBehaviourModule
-    {
-        public void Setup(List<GuiInventoryGridFillModule> gridFillModules)
-        {
-        }
-
-        public override void OnDrag(PointerEventData eventData)
-        {
-            base.OnDrag(eventData);
-            var position = eventData.position;
-            m_GuiDefaultEntity.transform.position = position;
-        }
-    }
-
-    [Serializable]
     public class GuiInventoryItemDragConnector : BehaviourModuleConnector
     {
         [Inject(typeof(GuiPdaEntity))] private GuiAbstractVisibilityModule m_GuiPdaVisibilityModule;
@@ -47,9 +32,6 @@ namespace _Project.Scripts
         [Inject(typeof(GuiTraderPlayerInventoryGridFillEntity))]
         private GuiInventoryGridFillModule m_GuiTraderPlayerInventoryGridFillModule;
 
-        [SelfInject] private GuiInventoryItemDragModule m_InventoryItemDragModule;
-        [SelfInject] private InventoryItemGridAssignModule m_GridAssignModule;
-
         private List<GuiInventoryGridFillModule> m_GridFillModules;
 
         protected override void Initialize()
@@ -70,7 +52,7 @@ namespace _Project.Scripts
             m_GridFillModules.Add(m_GuiTraderSellGridFillModule);
             m_GridFillModules.Add(m_GuiTraderPlayerInventoryGridFillModule);
 
-            m_InventoryItemDragModule.Setup(m_GridFillModules);
+
         }
 
         private void GuiStashScreenVisibilityModuleOnShown()
@@ -79,7 +61,7 @@ namespace _Project.Scripts
 
             m_GridFillModules.Add(m_MainInventoryGridFillModule);
             m_GridFillModules.Add(m_GuiStashGridFillModule);
-            m_InventoryItemDragModule.Setup(m_GridFillModules);
+
         }
 
         private void GuiPdaVisibilityModuleOnShown()
@@ -87,7 +69,7 @@ namespace _Project.Scripts
             m_GridFillModules.Clear();
 
             m_GridFillModules.Add(m_MainInventoryGridFillModule);
-            m_InventoryItemDragModule.Setup(m_GridFillModules);
+
         }
     }
 }
