@@ -86,7 +86,7 @@ namespace _Project.Scripts
         public Vector2Int CanAddItemToInventory(AbstractPickableItemDataObject dataObject)
         {
             var cantAddItemPosition = new Vector2Int(-1, -1);
-            var inventoryItemEntity = dataObject.InventoryItemEntity;
+            var inventoryItemEntity = dataObject.InventoryItemEntityPrefab;
             var size = inventoryItemEntity.GetBehaviorModuleByType<GuiInventoryItemModule>().SizeInGrid;
             int yMax = m_UnlockedCellsCount / 9 + 1;
 

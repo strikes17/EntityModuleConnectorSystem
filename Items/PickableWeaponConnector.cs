@@ -8,9 +8,8 @@ namespace _Project.Scripts
     [Serializable]
     public class PickableWeaponConnector : BehaviourModuleConnector
     {
-        [Inject] private EntityGameUpdateHandlerRegisterModule m_HandlerRegisterModule;
         [Inject] private WeaponsContainer m_WeaponsContainer;
-        [Inject] private GuiContainerModule m_GuiContainerModule;
+        [Inject] private GuiInventoryItemsContainerModule m_GuiInventoryItemsContainer;
 
         [SelfInject] private EntityInteractModule m_EntityInteractModule;
 
@@ -33,38 +32,11 @@ namespace _Project.Scripts
                     if (canAddItem)
                     {
                         entity.gameObject.SetActive(false);
-                        WeaponItem weaponItem = null;
-                        var weaponEntity = m_WeaponsContainer.SpawnWeapon(m_WeaponDataObject);
 
-                        if (user is PlayerEntity)
-                        {
-                            var inventoryItemEntity =
-                                m_GuiContainerModule.SpawnGuiEntity(m_WeaponDataObject.InventoryItemEntity) as
-                                    GuiInventoryItemEntity;
-                            inventoryItemEntity.gameObject.SetActive(false);
-                            weaponItem = new WeaponItem(m_WeaponDataObject, weaponEntity, inventoryItemEntity, m_HandlerRegisterModule);
-
-                            var itemModule = inventoryItemEntity.GetBehaviorModuleByType<GuiInventoryItemModule>();
-                            itemModule.OwnerEntity = user;
-
-                            //hz
-                            var assignModule =
-                                inventoryItemEntity.GetBehaviorModuleByType<InventoryItemGridAssignModule>();
-                            assignModule.AssignNewGrid(GridFillInventoryType.PlayerMain);
-                            assignModule.AssignNewGrid(GridFillInventoryType.NpcSell);
-                            assignModule.AssignNewGrid(GridFillInventoryType.TraderSell);
-                            assignModule.AssignNewGrid(GridFillInventoryType.PlayerStash);
-                        }
-                        else
-                        {
-                            weaponItem = new WeaponItem(m_WeaponDataObject, weaponEntity, null, m_HandlerRegisterModule);
-                        }
-
-
+                        WeaponItem weaponItem = new WeaponItem(m_WeaponDataObject, m_GuiInventoryItemsContainer,
+                            m_WeaponsContainer);
 
                         inventoryModule.AddItem(weaponItem);
-
-                        m_HandlerRegisterModule.Register(weaponItem.UsableItemEntity);
                     }
                 }
             }

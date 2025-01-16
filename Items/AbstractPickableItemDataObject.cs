@@ -7,7 +7,7 @@ namespace _Project.Scripts
         [SerializeField] protected GuiInventoryItemEntity m_InventoryItemPrefab;
         [SerializeField] protected string m_Id;
 
-        public GuiInventoryItemEntity InventoryItemEntity => m_InventoryItemPrefab;
+        public GuiInventoryItemEntity InventoryItemEntityPrefab => m_InventoryItemPrefab;
 
         public string Id => m_Id;
     }
