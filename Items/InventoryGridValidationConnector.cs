@@ -1,4 +1,5 @@
 ﻿using System;
+using _Project.Scripts.Camera;
 using UnityEngine;
 
 namespace _Project.Scripts
@@ -6,7 +7,7 @@ namespace _Project.Scripts
     [Serializable]
     public class InventoryGridValidationConnector : BehaviourModuleConnector
     {
-        [SelfInject] private InventoryModule m_InventoryModule;
+        [Inject(typeof(PlayerEntity))] private InventoryModule m_InventoryModule;
         [SelfInject] private InventoryGridValidationModule m_InventoryGridValidationModule;
 
         private Vector2Int m_LatestItemGridPosition;
@@ -26,7 +27,7 @@ namespace _Project.Scripts
 
         private void InventoryModuleOnAddItemValidationStarted(AbstractPickableItemDataObject dataObject)
         {
-            m_LatestItemGridPosition = m_InventoryGridValidationModule.CanAddItemToInventory(dataObject);
+            m_LatestItemGridPosition = m_InventoryGridValidationModule.IsItemCanFitTheGrid(dataObject);
             Debug.Log($"isFull: {m_LatestItemGridPosition.x == -1}");
             m_InventoryModule.IsFull = m_LatestItemGridPosition.x == -1;
         }

@@ -8,8 +8,8 @@ namespace _Project.Scripts
     [Serializable]
     public class GuiInventoryItemModule : GuiAbstractBehaviourModule
     {
-        public event Action<AbstractUsableItem> MiniatureBeganDrag = delegate{  };
-        public event Action<AbstractUsableItem> MiniatureEndDrag = delegate{  };
+        public event Action<AbstractUsableItem> MiniatureBeganDrag = delegate { };
+        public event Action<AbstractUsableItem> MiniatureEndDrag = delegate { };
 
         [SerializeField] private Vector2Int m_SizeInGrid;
 
@@ -18,10 +18,13 @@ namespace _Project.Scripts
         public AbstractUsableItem Item;
 
         private List<GuiInventoryGridFillModule> m_GridFillModules;
+        private List<InventoryGridValidationModule> m_GridValidationModules;
 
-        public void SetAllowedGrids(List<GuiInventoryGridFillModule> gridFillModules)
+        public void SetAllowedGrids(List<GuiInventoryGridFillModule> gridFillModules,
+            List<InventoryGridValidationModule> gridValidationModules)
         {
             m_GridFillModules = gridFillModules;
+            m_GridValidationModules = gridValidationModules;
         }
 
         public override void OnBeginDrag(PointerEventData eventData)
@@ -43,23 +46,27 @@ namespace _Project.Scripts
             Vector2 rectTransformPosition = m_GuiDefaultEntity.RectTransform.position;
             m_GuiDefaultEntity.RectTransform.position = position;
             float cellSize = 100f;
-            foreach (var gridFillModule in m_GridFillModules)
+            for (var gridIndex = 0; gridIndex < m_GridFillModules.Count; gridIndex++)
             {
+                var gridFillModule = m_GridFillModules[gridIndex];
+                var gridValidationModule = m_GridValidationModules[gridIndex];
+
                 Vector2 pivotPosition = gridFillModule.PivotPosition;
 
-                int cellX = Mathf.FloorToInt(pivotPosition.x - rectTransformPosition.x);
-                int cellY = Mathf.FloorToInt(pivotPosition.y - rectTransformPosition.y);
+                Vector2 difference = (pivotPosition - rectTransformPosition) / 100f;
 
-                for (int y = 0; y < m_SizeInGrid.y; y++)
+                int cellX = Mathf.FloorToInt(difference.x);
+                int cellY = Mathf.FloorToInt(difference.y);
+
+                Dictionary<Vector2Int, AbstractUsableItem> collidedCells = gridValidationModule.IsItemCanFitOrSwap(m_SizeInGrid, new Vector2Int(cellX, cellY));
+                if (collidedCells.Count == 0)
                 {
-                    int targetCellY = cellY + y;
-                    for (int x = 0; x < m_SizeInGrid.x; x++)
-                    {
-                        int targetCellX = cellX + x;
-                        gridFillModule.
-                    }
+                    Debug.Log($"Ok");
                 }
+                else
+                {
 
+                }
             }
         }
     }

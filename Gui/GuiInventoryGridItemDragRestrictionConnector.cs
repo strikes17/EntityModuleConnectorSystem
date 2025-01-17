@@ -10,13 +10,15 @@ namespace _Project.Scripts
     [Serializable]
     public class GuiInventoryGridItemDragRestrictionConnector : BehaviourModuleConnector
     {
-        [Inject(typeof(PlayerEntity))] private InventoryGridValidationModule m_PlayerInventoryValidationModule;
         [Inject(typeof(PlayerEntity))] private PlayerNpcInteractModule m_PlayerNpcInteractModule;
 
         [Inject(typeof(GuiPdaEntity))] private GuiAbstractVisibilityModule m_GuiPdaVisibilityModule;
 
         [Inject(typeof(GuiInventoryMainGridFillEntity))]
         private GuiInventoryGridFillModule m_MainInventoryGridFillModule;
+
+        [Inject(typeof(GuiInventoryMainGridFillEntity))]
+        private InventoryGridValidationModule m_MainInventoryGridValidationModule;
 
         [Inject(typeof(GuiTraderAssortmentGridFillEntity))]
         private GuiInventoryGridFillModule m_GuiTraderAssortmentGridFillModule;
@@ -51,7 +53,7 @@ namespace _Project.Scripts
                 var item = traderItem.Item2;
                 var inventoryItemEntity = item.InventoryItemEntity;
                 var itemModule = inventoryItemEntity.GetBehaviorModuleByType<GuiInventoryItemModule>();
-                itemModule.SetAllowedGrids(npcGrids);
+                // itemModule.SetAllowedGrids(npcGrids);
             }
 
             var playerGrids = new List<GuiInventoryGridFillModule>
@@ -60,13 +62,13 @@ namespace _Project.Scripts
                 m_GuiPlayerSellGridFillModule
             };
 
-            List<(Vector2Int, AbstractUsableItem)> playerItems = m_PlayerInventoryValidationModule.AllItems;
+            List<(Vector2Int, AbstractUsableItem)> playerItems = m_MainInventoryGridValidationModule.AllItems;
             foreach (var valueTuple in playerItems)
             {
                 var item = valueTuple.Item2;
                 var inventoryItemEntity = item.InventoryItemEntity;
                 var itemModule = inventoryItemEntity.GetBehaviorModuleByType<GuiInventoryItemModule>();
-                itemModule.SetAllowedGrids(playerGrids);
+                // itemModule.SetAllowedGrids(playerGrids,);
             }
         }
 
@@ -77,13 +79,18 @@ namespace _Project.Scripts
                 m_MainInventoryGridFillModule,
             };
 
-            List<(Vector2Int, AbstractUsableItem)> playerItems = m_PlayerInventoryValidationModule.AllItems;
+            var playerGridValidators = new List<InventoryGridValidationModule>
+            {
+                m_MainInventoryGridValidationModule
+            };
+
+            List<(Vector2Int, AbstractUsableItem)> playerItems = m_MainInventoryGridValidationModule.AllItems;
             foreach (var valueTuple in playerItems)
             {
                 var item = valueTuple.Item2;
                 var inventoryItemEntity = item.InventoryItemEntity;
                 var itemModule = inventoryItemEntity.GetBehaviorModuleByType<GuiInventoryItemModule>();
-                itemModule.SetAllowedGrids(playerGrids);
+                itemModule.SetAllowedGrids(playerGrids, playerGridValidators);
             }
         }
     }

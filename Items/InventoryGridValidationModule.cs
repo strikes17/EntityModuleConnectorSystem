@@ -83,15 +83,13 @@ namespace _Project.Scripts
             UnlockedCellsCount = 120;
         }
 
-        public Vector2Int CanAddItemToInventory(AbstractPickableItemDataObject dataObject)
+        public Vector2Int IsItemCanFitTheGrid(Vector2Int itemSize)
         {
             var cantAddItemPosition = new Vector2Int(-1, -1);
-            var inventoryItemEntity = dataObject.InventoryItemEntityPrefab;
-            var size = inventoryItemEntity.GetBehaviorModuleByType<GuiInventoryItemModule>().SizeInGrid;
             int yMax = m_UnlockedCellsCount / 9 + 1;
 
-            bool canFit = size.x + size.y <= m_UnlockedCellsCount;
-            Debug.Log($"maxCells: {m_UnlockedCellsCount}, size: {size}, canFit: {canFit}");
+            bool canFit = itemSize.x + itemSize.y <= m_UnlockedCellsCount;
+            Debug.Log($"maxCells: {m_UnlockedCellsCount}, size: {itemSize}, canFit: {canFit}");
 
             if (!canFit)
             {
@@ -120,21 +118,21 @@ namespace _Project.Scripts
                         continue;
                     }
 
-                    if (size.x == 1 && size.y == 1)
+                    if (itemSize.x == 1 && itemSize.y == 1)
                     {
                         return new Vector2Int(j, i);
                     }
 
                     int xCellsLeft = xMax - j;
-                    if (size.x > xCellsLeft)
+                    if (itemSize.x > xCellsLeft)
                     {
                         break;
                     }
 
                     bool isOccupied = false;
-                    for (int y = 0; y < size.y; y++)
+                    for (int y = 0; y < itemSize.y; y++)
                     {
-                        for (int x = 0; x < size.x; x++)
+                        for (int x = 0; x < itemSize.x; x++)
                         {
                             m_Grid.TryGetValue(new Vector2Int(j + x, i + y), out item);
                             isFree = item == null;
@@ -160,6 +158,42 @@ namespace _Project.Scripts
             }
 
             return cantAddItemPosition;
+        }
+
+        public Dictionary<Vector2Int, AbstractUsableItem> IsItemCanFitOrSwap(Vector2Int itemSize, Vector2Int gridPosition)
+        {
+            Dictionary<Vector2Int, AbstractUsableItem> items = new();
+
+            for (int i = 0; i < itemSize.y; i++)
+            {
+                for (int j = 0; j < itemSize.x; j++)
+                {
+                    var position = new Vector2Int(gridPosition.x + j, gridPosition.y + i);
+                    if (m_Grid[position] != null)
+                    {
+                        items.Add(position, m_Grid[position]);
+                    }
+                }
+            }
+
+            return items;
+        }
+
+        public bool IsItemCanFitTheGridAtPosition(Vector2Int itemSize, Vector2Int gridPosition)
+        {
+            for (int i = 0; i < itemSize.y; i++)
+            {
+                for (int j = 0; j < itemSize.x; j++)
+                {
+                    var position = new Vector2Int(gridPosition.x + j, gridPosition.y + i);
+                    if (m_Grid[position] != null)
+                    {
+                        return true;
+                    }
+                }
+            }
+
+            return false;
         }
 
         public void PlaceItemInGrid(AbstractUsableItem abstractUsableItem, Vector2Int gridPosition)

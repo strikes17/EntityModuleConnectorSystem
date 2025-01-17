@@ -8,7 +8,7 @@ namespace _Project.Scripts
     [Serializable]
     public class GuiPlayerMainInventoryGridFillConnector : BehaviourModuleConnector
     {
-        [Inject(typeof(PlayerEntity))] private InventoryGridValidationModule m_InventoryGridValidationModule;
+        [SelfInject] private InventoryGridValidationModule m_InventoryGridValidationModule;
         [SelfInject] private GuiInventoryGridFillModule m_InventoryGridFillModule;
 
         protected override void Initialize()
@@ -26,7 +26,6 @@ namespace _Project.Scripts
             AbstractUsableItem abstractUsableItem)
         {
             m_InventoryGridFillModule.SetItem(position, abstractUsableItem);
-            Debug.Log($"Set item t");
         }
     }
 }
