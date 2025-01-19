@@ -5,17 +5,17 @@ using Object = UnityEngine.Object;
 
 namespace _Project.Scripts
 {
-    public enum GridFillInventoryType
-    {
-        PlayerMain = 0, PlayerStash = 1, NpcCorpse, TraderBuy, TraderSell, NpcBuy, NpcSell, TraderAssortment
-    }
     [Serializable]
     public class GuiInventoryGridFillModule : GuiAbstractBehaviourModule
     {
         [SerializeField] private Transform m_ContentRoot;
         [SerializeField] private Transform m_ItemsRoot;
-        
+
         [SerializeField] private GameObject m_CellIndexerPrefab;
+
+        [SerializeField] private RectTransform m_RectTransform;
+
+        public Vector2 PivotPosition => m_RectTransform.anchoredPosition;
 
         private Dictionary<Vector2Int, Transform> m_GridCellsInstances;
 
@@ -29,7 +29,7 @@ namespace _Project.Scripts
         {
             if (m_GridCellsInstances.TryGetValue(position, out Transform gridCellTransform))
             {
-                var itemEntity = item.InventoryItemEntity;
+                GuiInventoryItemEntity itemEntity = item.InventoryItemEntity;
                 itemEntity.gameObject.SetActive(true);
 
                 var transform = itemEntity.transform;
@@ -52,6 +52,7 @@ namespace _Project.Scripts
                     GameObject.Destroy(transform.gameObject);
                 }
             }
+
             m_GridCellsInstances.Clear();
         }
 

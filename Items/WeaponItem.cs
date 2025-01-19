@@ -7,14 +7,11 @@ namespace _Project.Scripts
     [Serializable]
     public class WeaponItem : AbstractUsableItem
     {
-        [SerializeField, ReadOnly] private string m_Name;
-
-        public WeaponItem(AbstractPickableItemDataObject itemDataObject, WeaponEntity weaponEntity,
-            GuiInventoryItemEntity inventoryItemEntity,
-            EntityGameUpdateHandlerRegisterModule handlerRegisterModule) : base(itemDataObject, weaponEntity,
-            inventoryItemEntity, handlerRegisterModule)
+        public WeaponItem(AbstractPickableItemDataObject itemDataObject, GuiInventoryItemsContainerModule guiInventoryItemsContainer,
+            WeaponsContainer entityContainerModule) : base(itemDataObject, guiInventoryItemsContainer,
+            entityContainerModule)
         {
-            m_Name = weaponEntity.name;
+            m_UsableItemEntity = entityContainerModule.SpawnWeapon(itemDataObject as WeaponDataObject);
         }
     }
 }

@@ -5,13 +5,12 @@ namespace _Project.Scripts
     [Serializable]
     public abstract class AbstractUsableItem
     {
-        public AbstractUsableItem(AbstractPickableItemDataObject itemDataObject, UsableItemEntity usableItemEntity,
-            GuiInventoryItemEntity inventoryItemEntity, EntityGameUpdateHandlerRegisterModule handlerRegisterModule)
+        protected AbstractUsableItem(AbstractPickableItemDataObject itemDataObject,
+            GuiInventoryItemsContainerModule guiInventoryItemsContainer, EntityContainerModule entityContainerModule)
         {
-            m_UsableItemEntity = usableItemEntity;
             m_ItemDataObject = itemDataObject;
-            m_InventoryItemEntity = inventoryItemEntity;
-            m_HandlerRegisterModule = handlerRegisterModule;
+            m_GuiInventoryItemsContainer = guiInventoryItemsContainer;
+            m_EntityContainerModule = entityContainerModule;
         }
 
         public int Amount => m_Amount;
@@ -26,22 +25,26 @@ namespace _Project.Scripts
             {
                 if (m_InventoryItemEntity == null)
                 {
-                    m_InventoryItemEntity = UnityEngine.Object.Instantiate(m_ItemDataObject.InventoryItemEntity);
-                    m_HandlerRegisterModule.Register(m_InventoryItemEntity);
+                    m_InventoryItemEntity =
+                        m_GuiInventoryItemsContainer.SpawnInventoryItemEntity(m_ItemDataObject.InventoryItemEntityPrefab);
                 }
+
+                m_InventoryItemEntity.GetBehaviorModuleByType<GuiInventoryItemModule>().Item = this;
 
                 return m_InventoryItemEntity;
             }
         }
 
-        protected UsableItemEntity m_UsableItemEntity;
-
         protected GuiInventoryItemEntity m_InventoryItemEntity;
+
+        protected GuiInventoryItemsContainerModule m_GuiInventoryItemsContainer;
+
+        protected EntityContainerModule m_EntityContainerModule;
+
+        protected UsableItemEntity m_UsableItemEntity;
 
         protected AbstractPickableItemDataObject m_ItemDataObject;
 
         protected int m_Amount;
-
-        protected EntityGameUpdateHandlerRegisterModule m_HandlerRegisterModule;
     }
 }
