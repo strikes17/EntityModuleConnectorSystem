@@ -33,18 +33,17 @@ namespace _Project.Scripts
             MiniatureBeganDrag(Item);
         }
 
-        public override void OnEndDrag(PointerEventData eventData)
-        {
-            base.OnEndDrag(eventData);
-            MiniatureEndDrag(Item);
-        }
-
         public override void OnDrag(PointerEventData eventData)
         {
-            base.OnDrag(eventData);
+            base.OnEndDrag(eventData);
             var position = eventData.position;
-            Vector2 rectTransformPosition = m_GuiDefaultEntity.RectTransform.position;
             m_GuiDefaultEntity.RectTransform.position = position;
+        }
+
+        public override void OnEndDrag(PointerEventData eventData)
+        {
+            base.OnDrag(eventData);
+            Vector2 rectTransformPosition = m_GuiDefaultEntity.RectTransform.position;
             float cellSize = 100f;
             for (var gridIndex = 0; gridIndex < m_GridFillModules.Count; gridIndex++)
             {
@@ -53,19 +52,21 @@ namespace _Project.Scripts
 
                 Vector2 pivotPosition = gridFillModule.PivotPosition;
 
-                Vector2 difference = (pivotPosition - rectTransformPosition) / 100f;
+                Vector2 difference = (pivotPosition - rectTransformPosition);
+                difference.x /= cellSize;
+                difference.y /= cellSize;
 
-                int cellX = Mathf.FloorToInt(difference.x);
-                int cellY = Mathf.FloorToInt(difference.y);
+                int cellX = Mathf.Abs(Mathf.FloorToInt(difference.x));
+                int cellY = Mathf.Abs(Mathf.FloorToInt(difference.y));
 
-                Dictionary<Vector2Int, AbstractUsableItem> collidedCells = gridValidationModule.IsItemCanFitOrSwap(m_SizeInGrid, new Vector2Int(cellX, cellY));
+                Dictionary<Vector2Int, AbstractUsableItem> collidedCells =
+                    gridValidationModule.IsItemCanFitOrSwap(m_SizeInGrid, new Vector2Int(cellX, cellY));
                 if (collidedCells.Count == 0)
                 {
                     Debug.Log($"Ok");
                 }
                 else
                 {
-
                 }
             }
         }

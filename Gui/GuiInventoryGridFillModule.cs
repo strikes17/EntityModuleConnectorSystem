@@ -15,7 +15,7 @@ namespace _Project.Scripts
 
         [SerializeField] private RectTransform m_RectTransform;
 
-        public Vector2 PivotPosition => m_RectTransform.anchoredPosition;
+        public Vector2 PivotPosition => m_RectTransform.position;
 
         private Dictionary<Vector2Int, Transform> m_GridCellsInstances;
 

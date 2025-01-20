@@ -13,7 +13,8 @@ namespace _Project.Scripts
 
         private Dictionary<Vector2Int, AbstractUsableItem> m_Grid;
 
-        public List<(Vector2Int, AbstractUsableItem)> AllItems => m_Grid.Select(x => (x.Key, x.Value)).ToList();
+        public List<(Vector2Int, AbstractUsableItem)> AllItems =>
+            m_Grid.Select(x => (x.Key, x.Value)).Where(x => x.Value != null).ToList();
 
         public int UnlockedCellsCount
         {
@@ -89,7 +90,7 @@ namespace _Project.Scripts
             int yMax = m_UnlockedCellsCount / 9 + 1;
 
             bool canFit = itemSize.x + itemSize.y <= m_UnlockedCellsCount;
-            Debug.Log($"maxCells: {m_UnlockedCellsCount}, size: {itemSize}, canFit: {canFit}");
+            // Debug.Log($"maxCells: {m_UnlockedCellsCount}, size: {itemSize}, canFit: {canFit}");
 
             if (!canFit)
             {
@@ -136,7 +137,7 @@ namespace _Project.Scripts
                         {
                             m_Grid.TryGetValue(new Vector2Int(j + x, i + y), out item);
                             isFree = item == null;
-                            Debug.Log($"At cell: {j + x},{i + y} is free: {isFree}");
+                            // Debug.Log($"At cell: {j + x},{i + y} is free: {isFree}");
                             if (!isFree)
                             {
                                 isOccupied = true;
@@ -160,22 +161,39 @@ namespace _Project.Scripts
             return cantAddItemPosition;
         }
 
-        public Dictionary<Vector2Int, AbstractUsableItem> IsItemCanFitOrSwap(Vector2Int itemSize, Vector2Int gridPosition)
+        public Dictionary<Vector2Int, AbstractUsableItem> IsItemCanFitOrSwap(Vector2Int itemSize,
+            Vector2Int gridPosition)
         {
             Dictionary<Vector2Int, AbstractUsableItem> items = new();
 
-            for (int i = 0; i < itemSize.y; i++)
+            if (itemSize.x == 1 && itemSize.y == 1)
             {
-                for (int j = 0; j < itemSize.x; j++)
+                if (m_Grid.TryGetValue(gridPosition, out AbstractUsableItem item1))
                 {
-                    var position = new Vector2Int(gridPosition.x + j, gridPosition.y + i);
-                    if (m_Grid[position] != null)
+                    items.Add(gridPosition, item1);
+                    Debug.Log($"GridPosition+: {gridPosition}");
+                }
+            }
+            else
+            {
+                for (int i = 0; i < itemSize.y; i++)
+                {
+                    for (int j = 0; j < itemSize.x; j++)
                     {
-                        items.Add(position, m_Grid[position]);
+                        var position = new Vector2Int(gridPosition.x + j, gridPosition.y + i);
+                        if (m_Grid.TryGetValue(position, out AbstractUsableItem item1))
+                        {
+                            items.Add(position, item1);
+                            Debug.Log($"GridPosition+: {position}");
+                        }
+                        else
+                        {
+                            Debug.Log($"GridPosition: {position}");
+                        }
                     }
                 }
             }
-
+            
             return items;
         }
 
@@ -198,7 +216,8 @@ namespace _Project.Scripts
 
         public void PlaceItemInGrid(AbstractUsableItem abstractUsableItem, Vector2Int gridPosition)
         {
-            var size = abstractUsableItem.InventoryItemEntity.GetBehaviorModuleByType<GuiInventoryItemModule>().SizeInGrid;
+            var size = abstractUsableItem.InventoryItemEntity.GetBehaviorModuleByType<GuiInventoryItemModule>()
+                .SizeInGrid;
             for (int i = 0; i < size.y; i++)
             {
                 for (int j = 0; j < size.x; j++)

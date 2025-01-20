@@ -3,8 +3,10 @@ namespace _Project.Scripts
     public class AmmoItem : AbstractUsableItem
     {
         //Тут будет AmmoEntity
-        public AmmoItem(AbstractPickableItemDataObject itemDataObject, WeaponEntity weaponEntity,
-            GuiInventoryItemEntity inventoryItemEntity) : base(itemDataObject, weaponEntity, inventoryItemEntity)
+        public AmmoItem(AbstractPickableItemDataObject itemDataObject,
+            GuiInventoryItemsContainerModule guiInventoryItemsContainer,
+            WeaponsContainer entityContainerModule) : base(itemDataObject, guiInventoryItemsContainer,
+            entityContainerModule)
         {
         }
 

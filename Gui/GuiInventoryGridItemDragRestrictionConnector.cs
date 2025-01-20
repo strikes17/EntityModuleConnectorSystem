@@ -20,17 +20,17 @@ namespace _Project.Scripts
         [Inject(typeof(GuiInventoryMainGridFillEntity))]
         private InventoryGridValidationModule m_MainInventoryGridValidationModule;
 
-        [Inject(typeof(GuiTraderAssortmentGridFillEntity))]
-        private GuiInventoryGridFillModule m_GuiTraderAssortmentGridFillModule;
-
-        [Inject(typeof(GuiTraderBuyGridFillEntity))]
-        private GuiInventoryGridFillModule m_GuiTraderBuyGridFillModule;
-
-        [Inject(typeof(GuiPlayerSellGridFillEntity))]
-        private GuiInventoryGridFillModule m_GuiPlayerSellGridFillModule;
-
-        [Inject(typeof(GuiTraderPlayerInventoryGridFillEntity))]
-        private GuiInventoryGridFillModule m_GuiTraderPlayerInventoryGridFillModule;
+        // [Inject(typeof(GuiTraderAssortmentGridFillEntity))]
+        // private GuiInventoryGridFillModule m_GuiTraderAssortmentGridFillModule;
+        //
+        // [Inject(typeof(GuiTraderBuyGridFillEntity))]
+        // private GuiInventoryGridFillModule m_GuiTraderBuyGridFillModule;
+        //
+        // [Inject(typeof(GuiPlayerSellGridFillEntity))]
+        // private GuiInventoryGridFillModule m_GuiPlayerSellGridFillModule;
+        //
+        // [Inject(typeof(GuiTraderPlayerInventoryGridFillEntity))]
+        // private GuiInventoryGridFillModule m_GuiTraderPlayerInventoryGridFillModule;
 
         protected override void Initialize()
         {
@@ -40,36 +40,36 @@ namespace _Project.Scripts
 
         private void PlayerNpcInteractModuleOnTradeInteracted(NpcEntity npcTrader)
         {
-            var npcGrids = new List<GuiInventoryGridFillModule>
-            {
-                m_GuiTraderAssortmentGridFillModule,
-                m_GuiTraderBuyGridFillModule
-            };
-
-            var traderInventory = npcTrader.GetBehaviorModuleByType<InventoryGridValidationModule>();
-            List<(Vector2Int, AbstractUsableItem)> traderItems = traderInventory.AllItems;
-            foreach (var traderItem in traderItems)
-            {
-                var item = traderItem.Item2;
-                var inventoryItemEntity = item.InventoryItemEntity;
-                var itemModule = inventoryItemEntity.GetBehaviorModuleByType<GuiInventoryItemModule>();
-                // itemModule.SetAllowedGrids(npcGrids);
-            }
-
-            var playerGrids = new List<GuiInventoryGridFillModule>
-            {
-                m_GuiTraderPlayerInventoryGridFillModule,
-                m_GuiPlayerSellGridFillModule
-            };
-
-            List<(Vector2Int, AbstractUsableItem)> playerItems = m_MainInventoryGridValidationModule.AllItems;
-            foreach (var valueTuple in playerItems)
-            {
-                var item = valueTuple.Item2;
-                var inventoryItemEntity = item.InventoryItemEntity;
-                var itemModule = inventoryItemEntity.GetBehaviorModuleByType<GuiInventoryItemModule>();
-                // itemModule.SetAllowedGrids(playerGrids,);
-            }
+        //     var npcGrids = new List<GuiInventoryGridFillModule>
+        //     {
+        //         m_GuiTraderAssortmentGridFillModule,
+        //         m_GuiTraderBuyGridFillModule
+        //     };
+        //
+        //     var traderInventory = npcTrader.GetBehaviorModuleByType<InventoryGridValidationModule>();
+        //     List<(Vector2Int, AbstractUsableItem)> traderItems = traderInventory.AllItems;
+        //     foreach (var traderItem in traderItems)
+        //     {
+        //         var item = traderItem.Item2;
+        //         var inventoryItemEntity = item.InventoryItemEntity;
+        //         var itemModule = inventoryItemEntity.GetBehaviorModuleByType<GuiInventoryItemModule>();
+        //         // itemModule.SetAllowedGrids(npcGrids);
+        //     }
+        //
+        //     var playerGrids = new List<GuiInventoryGridFillModule>
+        //     {
+        //         m_GuiTraderPlayerInventoryGridFillModule,
+        //         m_GuiPlayerSellGridFillModule
+        //     };
+        //
+        //     List<(Vector2Int, AbstractUsableItem)> playerItems = m_MainInventoryGridValidationModule.AllItems;
+        //     foreach (var valueTuple in playerItems)
+        //     {
+        //         var item = valueTuple.Item2;
+        //         var inventoryItemEntity = item.InventoryItemEntity;
+        //         var itemModule = inventoryItemEntity.GetBehaviorModuleByType<GuiInventoryItemModule>();
+        //         // itemModule.SetAllowedGrids(playerGrids,);
+        //     }
         }
 
         private void GuiPdaVisibilityModuleOnShown()
