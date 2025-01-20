@@ -27,7 +27,8 @@ namespace _Project.Scripts
 
         private void InventoryModuleOnAddItemValidationStarted(AbstractPickableItemDataObject dataObject)
         {
-            m_LatestItemGridPosition = m_InventoryGridValidationModule.IsItemCanFitTheGrid(dataObject);
+            m_LatestItemGridPosition = m_InventoryGridValidationModule.IsItemCanFitTheGrid(
+                dataObject.InventoryItemEntityPrefab.GetBehaviorModuleByType<GuiInventoryItemModule>().SizeInGrid);
             Debug.Log($"isFull: {m_LatestItemGridPosition.x == -1}");
             m_InventoryModule.IsFull = m_LatestItemGridPosition.x == -1;
         }
