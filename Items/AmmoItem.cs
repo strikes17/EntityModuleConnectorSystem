@@ -5,7 +5,7 @@ namespace _Project.Scripts
         //Тут будет AmmoEntity
         public AmmoItem(AbstractPickableItemDataObject itemDataObject,
             GuiInventoryItemsContainerModule guiInventoryItemsContainer,
-            WeaponsContainer entityContainerModule) : base(itemDataObject, guiInventoryItemsContainer,
+            AmmoContainer entityContainerModule) : base(itemDataObject, guiInventoryItemsContainer,
             entityContainerModule)
         {
         }
